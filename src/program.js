@@ -1,44 +1,61 @@
 var program = require('commander'),
   commands = require('./commands'),
   config = require('../package.json');
+var $q = require('q');
 
-module.exports = {
-  setup: function(){
+
+function setup(){
     program
-      .usage('eva [command]');
+      .usage('enchup [command]');
 
     program
       .version(config.version);
 
     program
-      .command('setup [skeleton] [dir] ')
+      .command('setup [enchup]')
       .option('-f, --force', 'Clear directory if it is not empty')
       .description('Initialize application structure. Plugins will be generated automatically.')
       .action(commands.setup);
 
     program
-      .command('plugins')
-      .description('Generate requriejs plugins')
-      .action(commands.plugins);
+      .command('info')
+      .description('Show ecchup info accroding to current structure')
+      .action(commands.info);
 
     program
-      .command('info')
-      .description('Show app info')
-      .action(commands.info);
+      .command('generate')
+      .option('-i, --info', 'Show info about plugins')
+      .description('Generate requriejs plugins')
+      .action(commands.generate);
+
 
     program
       .command('create <component> <parameters> [template]')
       .option('-f, --force', 'Override if already exists')
       .description('Create components according to structure. <parameters> - {module-name}:{component-name}')
       .action(commands.create);
-  },
+}
+
+var available = ['setup', 'generate', 'info', 'create'];
+
+module.exports = {
 
   run: function(){
-    this.setup();
-    program.parse(process.argv);
-  },
 
-  program: function(){
-    return program;
+    var command;
+
+    if (process.argv[0] == 'node'){
+      command = process.argv[2];
+    } else {
+      command = process.argv[1];
+    }
+
+    setup();
+
+    if (available.indexOf(command) !== -1){
+      program.parse(process.argv);
+    } else {
+      program.help();
+    }
   }
 };

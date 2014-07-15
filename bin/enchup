@@ -1,11 +1,11 @@
-#!/usr/bin/env node
+#!/usr/bin/enchup node
 
 "use strict";
 
 var path = require('path');
 var fs = require('fs');
 
-var cli = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'lib', 'program');
+var cli = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'src', 'program');
 
 require(cli).run();
 

@@ -1,63 +1,49 @@
 "use strict";
 
 var chalk = require('chalk'),
-  path = require('path'),
-  $q = require('q'),
-
-  clone = require('./clone'),
-  config = require('./config'),
-  plugins = require('./plugins'),
-  create = require('./create');
+  setup = require('./commands/setup'),
+  info = require('./commands/info'),
+  generate = require('./commands/generate'),
+  create = require('./commands/create');
 
 function err(e){
   console.log(chalk.red(chalk.underline('Error')));
-  console.log(chalk.red(e.message));
+  console.log(e.message);
 }
 
 var commands = {
-  setup: function(dir, skeleton, options){
+  setup: function(enchup, options){
 
-    if (!dir){
-      dir = '.';
-    }
-
-    dir = path.join(dir, 'eva');
-
-    if (!skeleton){
-      skeleton = 'tuchk4/eva-skeleton';
-    }
-
-    clone(dir, skeleton, options)
-      .then(function(){
-        commands.plugins(dir);
-      })
-      .catch(err);
-  },
-
-  create: function(component, parameters, template, options){
-
-    create('eva', component, parameters, template, options)
-      .catch(err);
-  },
-
-
-  plugins: function(){
-
-    var dir = path.join('.', 'eva');
-    var structure = config.get(dir);
-
-    config.info(dir);
-
-    plugins.generate(dir, structure)
+    return setup
+      .run(enchup, options)
       .catch(err);
   },
 
   info: function(){
 
-    var dir = path.join('.', 'eva');
-    var skeleton = config.get(dir);
+    return info
+      .run()
+      .catch(err);
+  },
 
-    plugins.info(dir, skeleton);
+  generate: function(options){
+    var result;
+
+    if (options.hasOwnProperty('info') && options.info){
+      result = generate
+        .info()
+        .catch(err);
+    } else {
+       result = generate
+        .run()
+        .catch(err);
+    }
+
+    return result;
+  },
+
+  create: function(component, name, template){
+
   }
 };
 
