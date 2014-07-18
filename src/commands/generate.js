@@ -47,13 +47,14 @@ function save(dir, name, plugin){
 
   var pluginPath = path.join(dir, name + '.js');
 
+  // TODO:
   try {
     fs.writeFileSync(pluginPath, plugin);
 
     Utils.texts.log('generate.save.success', {
       name: name
     });
-  } catch (e){ // TODO:
+  } catch (e){
     Utils.texts.log('generate.save.error', {
       name: name
     });
@@ -62,7 +63,7 @@ function save(dir, name, plugin){
 
 function compile(template, vars){
   return template
-    .replace(new RegExp('{{ structure }}', 'g'), vars.structure)
+    .replace(new RegExp('\'{{ structure }}\'', 'g'), JSON.stringify(vars.structure))
     .replace(new RegExp('{{ name }}', 'g'), vars.name);
 }
 
@@ -85,7 +86,7 @@ function generate(){
         var template = Utils.templates.getRjsTemplate();
 
         var plugin = compile(template, {
-          structure: components[name],
+          structure: components,
           name: name
         });
 

@@ -43,7 +43,9 @@ var commands = {
   },
 
   create: function(component, name, template){
-
+    return create
+      .run(component, name, template)
+      .catch(err);
   }
 };
 

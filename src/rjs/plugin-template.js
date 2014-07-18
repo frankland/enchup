@@ -1,4 +1,7 @@
 define(function(){
+
+  var structure = '{{ structure }}';
+
   return {
     /**
      *
@@ -151,7 +154,7 @@ define(function(){
      */
     process: function(type, name, req, onload, config)
     {
-      config.structure = '{{ structure }}';
+      //config.structure = '{{ structure }}';
 
       var reqPath = this.reqPath(type, name, config, this.getCurrentUrl(req));
 

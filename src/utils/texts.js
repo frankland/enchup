@@ -17,7 +17,11 @@ module.exports = {
     'generate.info.init': '{Information about rjs plugins}:green',
     'generate.no-components': 'Components are not defined at enchup config',
     'generate.save.error': 'Can not save plugin - {name}:underline',
-    'generate.save.success': 'Generated plugin - {name}:green'
+    'generate.save.success': 'Generated plugin - {name}:green',
+
+
+    'create.no-component': 'Component {component}:underline does not exist',
+    'create.wrong-format': 'Wrong component format'
   },
 
   compile: function(key, options){
@@ -54,7 +58,8 @@ module.exports = {
   },
 
   err: function(key, options){
-    return new Error(this.compile(key, options));
+    var message = this.compile(key, options);
+    return new Error(message);
   },
 
   log: function(key, options){

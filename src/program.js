@@ -1,8 +1,6 @@
 var program = require('commander'),
   commands = require('./commands'),
   config = require('../package.json');
-var $q = require('q');
-
 
 function setup(){
     program
@@ -32,7 +30,7 @@ function setup(){
     program
       .command('create <component> <parameters> [template]')
       .option('-f, --force', 'Override if already exists')
-      .description('Create components according to structure. <parameters> - {module-name}:{component-name}')
+      .description('Create components according to structure. <parameters> - :component..:component')
       .action(commands.create);
 }
 
