@@ -1,178 +1,155 @@
 define(function(){
 
-  var structure = '{{ structure }}';
+  var components = '{{ structure }}';
+  var component = '{{ name }}';
+
+  function unique(value, index, self) {
+    return self.indexOf(value) === index;
+  }
+
+  function cutExtension(path){
+    return path.replace(/\.[^\.]+$/,'')
+  }
+
+  function getPlaceholders(path, keys){
+
+    var placeholders = path.match(/(:[^\/|:|\-|\.]+:?)/g);
+
+    if (!placeholders || !placeholders.length){
+      throw new Error('Wrong format');
+    }
+
+    placeholders = placeholders.filter(unique);
+
+    if (!validate(keys, placeholders)){
+      throw new Error('Wrong format');
+    }
+
+    var result = {};
+
+    for (var i = 0, size = placeholders.length; i < size; i++){
+      var key = clearPlaceholder(placeholders[i]);
+
+      result[key] = {
+        placeholder: placeholders[i],
+        value: keys[i]
+      }
+    }
+
+    return result;
+  }
+
+  function clearPlaceholder(key){
+    if (key[0] == ':'){
+      key = key.slice(1);
+    }
+
+    if (key[key.length - 1] == ':'){
+      key = key.slice(0, -1);
+    }
+    return key;
+  }
+
+  function validate(keys, placeholders){
+    var result = true;
+
+    if (!keys.length || !placeholders.length){
+      result = false;
+    }
+
+    if (keys.length != placeholders.length){
+      result = false;
+    }
+
+    return result;
+  }
+
+  function loadDependencies(name){
+    var path = components[name || component];
+
+    var placeholders = path.match(/(\^[^\/|:|-]+:?)/g);
+
+    if (!placeholders || !placeholders.length){
+      return path;
+    }
+
+    placeholders = placeholders.filter(unique);
+
+    for (var i = 0, size = placeholders.length; i < size; i++){
+      var key = placeholders[i].slice(1);
+      if (!components.hasOwnProperty(key)){
+        throw new Error('Wrong format');
+      }
+
+      var sub = loadDependencies(key);
+
+      if (!sub){
+        throw new Error('Wrong format');
+      }
+
+      sub = cutExtension(sub);
+
+      path = path.replace(placeholders[i], sub);
+    }
+
+    return path;
+  }
+
+  function getPath(key, current){
+
+    var keys = key.split(':'),
+      path = false,
+      placeholders = {};
+
+    if (!components.hasOwnProperty(component)){
+      throw new Error('No component');
+    } else {
+
+      path = loadDependencies();
+
+      placeholders = getPlaceholders(path, keys);
+
+      currentPlaceHolders(path, current, placeholders);
+
+      for (var name in placeholders){
+        if (placeholders.hasOwnProperty(name)){
+          var placeholder = placeholders[name];
+
+          var re = new RegExp(placeholder.placeholder, 'g');
+          path = path.replace(re, placeholder.value);
+        }
+      }
+    }
+
+    return path;
+  }
+
+  function currentPlaceHolders(path, current, placeholders){
+
+    var parts = {
+      current: current.split('/'),
+      path: path.split('/')
+    };
+
+    for (var i = 0, size = parts.current.length; i < size; i++){
+      if (parts.path[i][0] == ':') {
+        var part = clearPlaceholder(parts.path[i]);
+        placeholders[part].value = parts.current[i];
+      }
+    }
+  }
 
   return {
-    /**
-     *
-     * @param req
-     * @returns {*}
-     */
-    getCurrentUrl: function(req)
-    {
-      if (req.hasOwnProperty('toUrl')){
 
-        // toUrl
-        return req.toUrl('.').split('?')[0];
-      } else {
-
-        // Normalize
-        return req('.').split('?')[0];
-      }
-
-    },
-
-    /**
-     *
-     * @param config
-     * @param url
-     * @returns {*}
-     */
-    getCurrentModule: function(config, url)
-    {
-      var baseUrl = config.baseUrl;
-      var prefix = config.structure.prefix;
-
-      return url.replace(
-        new RegExp('^.*'+(baseUrl + prefix.replace('{module}', ''))),
-        '').split('/')[0];
-    },
-
-    /**
-     *
-     * @param path
-     * @param config
-     * @param url
-     * @returns {string}
-     */
-    path: function(path, config, url, module)
-    {
-      var prefix = config.structure.prefix;
-
-      return prefix.replace('{module}',
-        (module || this.getCurrentModule(config, url))
-      ) + path;
-    },
-
-    /**
-     *
-     * @param name
-     * @returns {*}
-     */
-    value: function(name)
-    {
-      var parts = name.split(':');
-      var placeholder;
-
-      if (parts.length == 1){
-        placeholder = parts[0];
-      } else if (parts.length == 2) {
-        placeholder =  parts[1];
-      } else {
-        throw new Error('Invalid require path format for structure plugin');
-      }
-
-      if (placeholder[0] == '@'){
-        placeholder = placeholder.substr(1);
-      }
-
-      return placeholder;
-    },
-
-    /**
-     *
-     * @param name
-     * @returns {*}
-     */
-    module: function(name)
-    {
-      var parts = name.split(':');
-
-      if (parts.length != 2){
-        return null;
-      }
-
-      return parts[0];
-    },
-
-
-
-    /**
-     *
-     * @param type
-     * @param name
-     * @param config
-     * @param url
-     * @returns {string}
-     */
-    reqPath: function (type, name, config, url)
-    {
-      var structure = config.structure;
-
-      var component = this.value(name);
-
-      var path = structure[type].path
-        .replace(new RegExp('{' + type + '}', 'g'), component);
-
-      var module = this.module(name);
-
-      return this.path(path, config, url, module);
-    },
-
-    /**
-     *
-     * @param name
-     * @param normalize
-     * @returns {*}
-     */
-    normalize: function (name, normalize)
-    {
-      var normalized;
-
-      if (name.split(':').length == 1){
-
-        var config = requirejs.s.contexts._.config;
-
-        var module = this.getCurrentModule(config, config.baseUrl  + this.getCurrentUrl(normalize));
-
-        normalized = module + ':' + name;
-
-      } else {
-        normalized = name;
-      }
-
-      return normalized;
-    },
-
-    /**
-     *
-     * @param type
-     * @param name
-     * @param req
-     * @param onload
-     * @param config
-     */
-    process: function(type, name, req, onload, config)
-    {
-      //config.structure = '{{ structure }}';
-
-      var reqPath = this.reqPath(type, name, config, this.getCurrentUrl(req));
-
-      req([reqPath], function(value){
-        onload(value);
-      });
-    },
-
-    /**
-     *
-     * @param name
-     * @param req
-     * @param onload
-     * @param config
-     */
     load: function (name, req, onload, config) {
 
-      this.process('{{ name }}', name, req, onload, config);
+      var current = req.toUrl('.').split('?')[0].replace(config.baseUrl, '');
+
+      var path = config.baseUrl + getPath(name, current);
+
+      req([path], function(value){
+        onload(value);
+      });
     }
   }
 });
