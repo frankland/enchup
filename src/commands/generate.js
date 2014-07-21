@@ -71,14 +71,11 @@ function generate(){
   var dir = Utils.app.getPluginsDir();
   var config = Utils.config.getConfig();
 
-  var deferred = Q.defer();
-
   if (!config.hasOwnProperty('components')){
-    deferred.reject(Utils.err('generate.no-components'));
+    throw Utils.err('generate.no-components');
   } else {
 
     var components = config.components;
-    var savers = [];
 
     for (var name in components){
       if (components.hasOwnProperty(name)){
@@ -90,18 +87,10 @@ function generate(){
           name: name
         });
 
-        savers.push(
-          save(dir, name, plugin)
-        );
+        save(dir, name, plugin);
       }
     }
-
-    Q.all(savers).then(function(){
-      deferred.resolve();
-    });
   }
-
-  return deferred.promise;
 }
 
 module.exports = {

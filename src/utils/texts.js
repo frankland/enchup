@@ -4,6 +4,7 @@ var phrases = {
   'setup.dir.exists': 'Config already exists. Add -f flag if you want to override it.',
   'setup.clone.start': 'Setup skeleton from {repo}:green to {dir}:green',
   'setup.clone.finish': 'Enchup structure was cloned successfully',
+  'clone.git-error': 'Git clone error',
 
   'config.info.name': 'name - {name}:green',
   'config.info.author': 'author - {author}:yellow',

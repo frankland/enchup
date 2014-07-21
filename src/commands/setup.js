@@ -2,17 +2,36 @@ var Q = require('q'),
   rimraf = require('rimraf'),
   exec = require('child_process').exec,
   fs = require('fs'),
+  path = require('path'),
   Utils = require('../utils/include');
 
 
-function exists(dir, options){
-  var deferred = Q.defer();
+function exists(options){
+  var deferred = Q.defer(),
+    dir = Utils.app.getDir();
+
 
   if (fs.existsSync(dir)) {
     if (options.hasOwnProperty('force') && options.force) {
-      rimraf(dir, function(){
+
+      var tree = Utils.app.getEnchupTree();
+
+      for (var i = 0, size = tree.length; i < size; i++){
+        var item = path.join(dir, tree[i][1]),
+          type = tree[i][0];
+
+        try {
+          if (type == 'file') {
+            fs.unlinkSync(item);
+          } else if (type == 'dir'){
+            rimraf.sync(item);
+          }
+        } catch (e){
+
+        }
         deferred.resolve();
-      });
+      }
+
     } else {
       deferred.reject(Utils.texts.err('setup.dir.exists'));
     }
@@ -23,8 +42,10 @@ function exists(dir, options){
   return deferred.promise;
 }
 
-function clone(dir, enchup, options){
-  var gh = 'https://github.com/' + enchup;
+function clone(enchup, options){
+  var gh = 'https://github.com/' + enchup,
+    tempDir = Utils.app.getTempDir(),
+    dir = Utils.app.getDir();
 
   Utils.texts.log('setup.clone.start', {
     repo: enchup,
@@ -33,39 +54,58 @@ function clone(dir, enchup, options){
 
   var deferred = Q.defer();
 
-  exec('git clone ' + gh + ' ' + dir, function(error){
+  clearTmp();
+
+  exec('git clone ' + gh + ' ' + tempDir, function(error){
+
     if (error){
-      deferred.reject(new Error(error.toString()));
+      deferred.reject(Utils.texts.err('clone.git-error'));
     } else {
-      rimraf('.git', function(error) {
-        if (error === null) {
+      if (error === null) {
 
-          Utils.texts.log('setup.clone.finish');
+        var tree = Utils.app.getEnchupTree();
 
-          deferred.resolve();
-        } else {
-          deferred.reject(new Error(error.toString()));
+        for (var i = 0, size = tree.length; i < size; i++){
+          var oldPath = path.join(tempDir, tree[i][1]),
+            newPath = path.join(dir, tree[i][1]);
+
+          fs.renameSync(oldPath, newPath);
         }
-      });
+
+        Utils.texts.log('setup.clone.finish');
+
+        deferred.resolve();
+
+        clearTmp();
+      } else {
+        deferred.reject(new Error(error.toString()));
+      }
     }
   });
 
   return deferred.promise;
 }
 
+function clearTmp(){
+  var tempDir = Utils.app.getTempDir();
+
+  if (fs.existsSync(tempDir)){
+    rimraf.sync(tempDir);
+  }
+}
+
 
 module.exports = {
 
   run: function(enchup, options){
-    var dir = Utils.app.getDir();
 
     if (!enchup){
       enchup = Utils.app.getDefaultRepo();
     }
 
-    return exists(dir, options)
+    return exists(options)
       .then(function(){
-        return clone(dir, enchup, options);
+        return clone(enchup, options);
       });
   }
 };

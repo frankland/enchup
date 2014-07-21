@@ -33,28 +33,40 @@ function getTemplateByExt(component){
   return template;
 }
 
+function getTemplate(dir, component, template){
+  var templatePath;
+
+  if (template){
+    templatePath = path.join(dir, component, template + '.' + getExtension(component));
+  } else {
+    templatePath = path.join(dir, component, component + '.' + getExtension(component));
+  }
+
+  var content;
+
+  if (fs.existsSync(templatePath)){
+    content = fs.readFileSync(templatePath, {
+      encoding: 'utf8'
+    });
+  } else {
+    texts.log('templates.does-not-exist');
+    content = '';
+  }
+
+  return content;
+}
+
 module.exports = {
+
 
   getComponentTemplate: function(component, template){
 
-    var dir = app.getTempalteDir(component),
-      templatePath;
+    var dir = app.getTempalteDir(component);
+    var content = getTemplate(dir, component, template);
 
-    if (template){
-      templatePath = path.join(dir, component, template + '.' + getExtension(component));
-    } else {
-      templatePath = path.join(dir, component, component + '.' + getExtension(component));
-    }
-
-    var content;
-
-    if (fs.existsSync(templatePath)){
-      content = fs.readFileSync(templatePath, {
-        encoding: 'utf8'
-      });
-    } else {
-      texts.log('templates.does-not-exist');
-      content = '';
+    if (!content){
+      dir = app.getRepoTempalteDir(component);
+      content = getTemplate(dir, component, template);
     }
 
     return content;
