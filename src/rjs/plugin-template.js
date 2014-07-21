@@ -7,8 +7,8 @@ define(function(){
     return self.indexOf(value) === index;
   }
 
-  function cutExtension(path){
-    return path.replace(/\.[^\.]+$/,'')
+  function cutFileName(path){
+    return path.match(/(.+)\//)[1];
   }
 
   function getPlaceholders(path, keys){
@@ -87,7 +87,7 @@ define(function(){
         throw new Error('Wrong format');
       }
 
-      sub = cutExtension(sub);
+      sub = cutFileName(sub);
 
       path = path.replace(placeholders[i], sub);
     }
@@ -109,7 +109,7 @@ define(function(){
 
       placeholders = getPlaceholders(path, keys);
 
-      currentPlaceHolders(path, current, placeholders);
+      currentPlaceHolders(key, current, placeholders);
 
       for (var name in placeholders){
         if (placeholders.hasOwnProperty(name)){
@@ -124,17 +124,73 @@ define(function(){
     return path;
   }
 
-  function currentPlaceHolders(path, current, placeholders){
+  function getCurrentComponent(current){
+    var size = current.split('/').length,
+      component;
 
-    var parts = {
-      current: current.split('/'),
-      path: path.split('/')
-    };
+    for (component in components){
+      if (components.hasOwnProperty(component)){
+        var componentPath = loadDependencies(component).split('/').slice(0, size);
 
-    for (var i = 0, size = parts.current.length; i < size; i++){
-      if (parts.path[i][0] == ':') {
-        var part = clearPlaceholder(parts.path[i]);
-        placeholders[part].value = parts.current[i];
+        if (componentPath.length == size) {
+          componentPath = componentPath.join('/');
+
+          var re = new RegExp(componentPath.replace(/(\:[^\/|:|-]+:?)/g, '([^/|:|-]+:?)'));
+          var matches = current.match(re);
+
+          if (matches) {
+            break;
+          }
+        }
+      }
+    }
+
+    return component;
+  }
+
+  function currentPlaceHolders(name, current, placeholders) {
+
+    var component = getCurrentComponent(current),
+      componentPath = loadDependencies(component),
+      parts = {},
+      found = {},
+      keys = name.split(':');
+
+    parts.current = current.split('/');
+    parts.path = componentPath.split('/').slice(0, parts.current.length);
+
+    componentPath = parts.path.join('/');
+
+    var matchCounter = 0;
+
+    for (var i = 0; i < parts.current.length; i++) {
+
+      if (parts.path[i].length) {
+        var matches = parts.path[i].match(/(:[^\/|:|\-|\.]+:?)/g);
+
+        if (matches) {
+
+          if (keys[matchCounter] == '@'){
+            for (var j = 0; j < matches.length; j++) {
+              var part = clearPlaceholder(matches[j]);
+
+              if (!found.hasOwnProperty(part)) {
+                found[part] = {
+                  total: componentPath.match(new RegExp(':' + part, 'g')).length,
+                  current: 0
+                }
+              }
+
+              found[part].current++;
+
+              if (found[part].total == found[part].current) {
+                placeholders[part].value = parts.current[i];
+              }
+            }
+          }
+
+          matchCounter++;
+        }
       }
     }
   }
