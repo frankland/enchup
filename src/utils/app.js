@@ -6,6 +6,10 @@ module.exports = {
     return path.join('.', 'enchup');
   },
 
+  getTempalteDir: function(){
+    return path.join(this.getDir(), 'templates');
+  },
+
   getConfigName: function(){
     return 'enchup.yml';
   },

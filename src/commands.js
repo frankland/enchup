@@ -42,9 +42,9 @@ var commands = {
     return result;
   },
 
-  create: function(component, name, template){
+  create: function(component, name, template, options){
     return create
-      .run(component, name, template)
+      .run(component, name, template, options)
       .catch(err);
   }
 };

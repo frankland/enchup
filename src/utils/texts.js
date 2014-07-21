@@ -1,34 +1,39 @@
 var chalk = require('chalk');
 
-module.exports = {
-  phrases: {
-    'setup.dir.exists': 'Config already exists. Add -f flag if you want to override it.',
-    'setup.clone.start': 'Setup skeleton from {repo}:green to {dir}:green',
-    'setup.clone.finish': 'Enchup structure was cloned successfully',
+var phrases = {
+  'setup.dir.exists': 'Config already exists. Add -f flag if you want to override it.',
+  'setup.clone.start': 'Setup skeleton from {repo}:green to {dir}:green',
+  'setup.clone.finish': 'Enchup structure was cloned successfully',
 
-    'config.info.name': 'name - {name}:green',
-    'config.info.author': 'author - {author}:yellow',
-    'config.info.version': 'version - {version}:green',
-    'config.info.description': 'description - {description}:green',
-    'config.info.readme': 'readme - {readme}:green',
+  'config.info.name': 'name - {name}:green',
+  'config.info.author': 'author - {author}:yellow',
+  'config.info.version': 'version - {version}:green',
+  'config.info.description': 'description - {description}:green',
+  'config.info.readme': 'readme - {readme}:green',
+  'config.no-components': 'components are not defined',
+  'config.unexist': 'Enchup file ({file}:underline) does not exist',
 
-    'config.unexist': 'Enchup file ({file}:underline) does not exist',
-
-    'generate.info.init': '{Information about rjs plugins}:green',
-    'generate.no-components': 'Components are not defined at enchup config',
-    'generate.save.error': 'Can not save plugin - {name}:underline',
-    'generate.save.success': 'Generated plugin - {name}:green',
+  'generate.info.init': '{Information about rjs plugins}:green',
+  'generate.no-components': 'Components are not defined at enchup config',
+  'generate.save.error': 'Can not save plugin - {name}:underline',
+  'generate.save.success': 'Generated plugin - {name}:green',
 
 
-    'create.no-component': 'Component {component}:underline does not exist',
-    'create.wrong-format': 'Wrong component format'
-  },
+  'create.no-component': 'Component {component}:underline does not exist',
+  'create.wrong-format': 'Wrong component format',
+  'create.cannot-create-dir': 'Can not create dir {dir}:underline',
+  'create.no-force': 'Component already exists. If you want to override use -f flag',
+  'create.success': 'Component {component}:green created using {template}:yellow template. Component path: {path}:underline',
 
+  'templates.does-not-exist': 'Template does not exist'
+};
+
+var Texts = {
   compile: function(key, options){
     var phrase;
 
-    if (this.phrases.hasOwnProperty(key)){
-      phrase = this.phrases[key];
+    if (phrases.hasOwnProperty(key)){
+      phrase = phrases[key];
     } else {
       phrase = 'Phrase is not defined';
     }
@@ -58,11 +63,14 @@ module.exports = {
   },
 
   err: function(key, options){
-    var message = this.compile(key, options);
+
+    var message = Texts.compile(key, options);
     return new Error(message);
   },
 
   log: function(key, options){
-    console.log(this.compile(key, options))
+    console.log(Texts.compile(key, options))
   }
 };
+
+module.exports = Texts;

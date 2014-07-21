@@ -3,8 +3,47 @@ var Utils = require('../utils/include'),
   fs = require('fs'),
   Q = require('q');
 
+function getPlaceholders(path, keys){
+
+  var placeholders = path.match(/(:[^\/|:|\-|\.]+:?)/g);
+
+  if (!placeholders || !placeholders.length){
+    throw Utils.texts.err('create.wrong-format');
+  }
+
+  placeholders = placeholders.filter(unique);
+
+  if (!validate(keys, placeholders)){
+    throw Utils.texts.err('create.wrong-format');
+  }
+
+  var result = {};
+
+  for (var i = 0, size = placeholders.length; i < size; i++){
+    var key = placeholders[i];
+    if (key[0] == ':'){
+      key = key.slice(1);
+    }
+
+    if (key[key.length - 1] == ':'){
+      key = key.slice(0, -1);
+    }
+
+    result[key] = {
+      placeholder: placeholders[i],
+      value: keys[i]
+    }
+  }
+
+  return result;
+}
+
 function unique(value, index, self) {
   return self.indexOf(value) === index;
+}
+
+function cutExtension(path){
+  return path.replace(/\.[^\.]+$/,'')
 }
 
 function validate(keys, placeholders){
@@ -44,6 +83,8 @@ function loadDependencies(config, component){
       throw new Utils.texts.err('create.wrong-format');
     }
 
+    sub = cutExtension(sub);
+
     path = path.replace(placeholders[i], sub);
   }
 
@@ -53,79 +94,103 @@ function loadDependencies(config, component){
 function getPath(component, key, config){
 
    var keys = key.split(':'),
-    path = false;
+    path = false,
+    placeholders = {};
 
   if (!config.hasOwnProperty(component)){
     throw Utils.texts.err('create.no-component', {
-      component: name
+      component: component
     });
   } else {
 
     path = loadDependencies(config, component);
 
-    var placeholders = path.match(/(:[^\/|:|\-|\.]+:?)/g);
+    placeholders = getPlaceholders(path, keys);
 
-    if (!placeholders || !placeholders.length){
-      throw new Utils.texts.err('create.wrong-format');
-    }
+    for (var name in placeholders){
+      if (placeholders.hasOwnProperty(name)){
+        var placeholder = placeholders[name];
 
-    placeholders = placeholders.filter(unique);
-
-
-
-    if (!validate(keys, placeholders)){
-      throw new Utils.texts.err('create.wrong-format');
-    } else {
-
-      for (var i = 0, size = placeholders.length; i < size; i++){
-          var re = new RegExp(placeholders[i], 'g');
-          path = path.replace(re, keys[i]);
+        var re = new RegExp(placeholder.placeholder, 'g');
+        path = path.replace(re, placeholder.value);
       }
     }
   }
 
-  return Utils.path.join('.', path);
+  return {
+    path: Utils.path.join('.', path),
+    placeholders: placeholders
+  }
 }
 
-function create(path, template){
+function create(path, component, template, options){
 
-  var dir = Utils.path.dirname(path),
-    result = mkdirp.sync(dir);
+  var dir = Utils.path.dirname(path.path);
 
-  if (!result) {
-    throw new Error(result);
-  }
+  if (!fs.existsSync(dir)){
+    var result = mkdirp.sync(dir);
 
-
-  if (fs.existsSync(path)){
-    fs.unlinkSync(path);
-
-    if (!options.force){
-
-    } else {
-
+    if (!result) {
+      throw Utils.texts.err('create.cannot-create-dir', {
+        dir: dir
+      });
     }
   }
 
-  fs.writeFileSync(path, 'tpl');
-}
+  var isWritable = false;
 
-function compile(template, options){
+  if (fs.existsSync(path.path)){
 
+    if (!options.force){
+      throw Utils.texts.err('create.no-force');
+    } else {
+      fs.unlinkSync(path.path);
+      isWritable = true;
+    }
+  } else {
+    isWritable = true;
+  }
+
+  if (isWritable){
+
+    var content = Utils.templates.getComponentTemplate(component, template);
+
+    var placeholders = {};
+    for (var item in path.placeholders){
+      if (path.placeholders.hasOwnProperty(item)){
+        placeholders[item] = path.placeholders[item].value;
+      }
+    }
+
+    var compiled = Utils.templates.compile(content, placeholders);
+
+    fs.writeFileSync(path.path, compiled);
+  }
 }
 
 module.exports = {
 
-  run: function(component, key, template){
-    var config = Utils.config.getConfig(),
-      components = config.components;
+  run: function(component, key, template, options){
 
-    var path = getPath(component, key, components);
+    var components = Utils.config.getComponents();
 
-    create(path);
+    var deferred = Q.defer();
 
-    console.log(path);
+    try {
+      var path = getPath(component, key, components);
 
-    return Q.when(null);
+      create(path, component, template, options);
+
+      Utils.texts.log('create.success', {
+        component: component,
+        template: template || 'empty',
+        path: path.path
+      });
+      deferred.resolve();
+    } catch(e){
+      deferred.reject(e);
+    }
+
+    return deferred.promise;
   }
 };

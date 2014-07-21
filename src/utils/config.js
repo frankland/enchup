@@ -24,5 +24,15 @@ module.exports = {
     }
 
     return yaml.safeLoad(fs.readFileSync(configFile, 'utf8'));
+  },
+
+  getComponents: function(){
+    var config = this.getConfig();
+
+    if (!config.hasOwnProperty('components')){
+      throw texts.err('config.no-components');
+    }
+
+    return config.components;
   }
 };
