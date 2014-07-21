@@ -83,7 +83,7 @@ function generate(){
     for (var name in components){
       if (components.hasOwnProperty(name)){
 
-        var template = Utils.templates.getRjsTemplate();
+        var template = Utils.templates.getRjsTemplate(name);
 
         var plugin = compile(template, {
           structure: components,

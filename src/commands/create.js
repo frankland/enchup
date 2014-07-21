@@ -46,6 +46,10 @@ function cutExtension(path){
   return path.replace(/\.[^\.]+$/,'')
 }
 
+function cutFileName(path){
+  return path.match(/(.+)\//)[1];
+}
+
 function validate(keys, placeholders){
   var result = true;
 
@@ -83,8 +87,7 @@ function loadDependencies(config, component){
       throw new Utils.texts.err('create.wrong-format');
     }
 
-    sub = cutExtension(sub);
-
+    sub = cutFileName(sub);
     path = path.replace(placeholders[i], sub);
   }
 
@@ -165,6 +168,23 @@ function create(path, component, template, options){
     var compiled = Utils.templates.compile(content, placeholders);
 
     fs.writeFileSync(path.path, compiled);
+
+    var tplName =  '';
+    if (template){
+      tplName = template;
+    } else {
+      if (content.length){
+        tplName = 'default';
+      } else {
+        'empty';
+      }
+    }
+
+    Utils.texts.log('create.success', {
+      component: component,
+      template: tplName,
+      path: path.path
+    });
   }
 }
 
@@ -181,11 +201,6 @@ module.exports = {
 
       create(path, component, template, options);
 
-      Utils.texts.log('create.success', {
-        component: component,
-        template: template || 'empty',
-        path: path.path
-      });
       deferred.resolve();
     } catch(e){
       deferred.reject(e);
