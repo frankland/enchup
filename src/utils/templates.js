@@ -1,19 +1,49 @@
 var app = require('./app'),
   texts = require('./texts'),
+  config = require('./config'),
   fs = require('fs'),
   path = require('path');
 
+var types = {
+  'json-plugin-template.js': ['json'],
+  'text-plugin-template.js': ['html', 'md']
+};
+
+function getExtension(component){
+  var path = config.getComponent(component);
+
+  return path.split('.').pop();
+}
+
+function getTemplateByExt(component){
+  var path = config.getComponent(component),
+    ext = getExtension(component);
+
+  var template = 'plugin-template.js';
+
+  for (var type in types){
+    if (types.hasOwnProperty(type)){
+      if (types[type].indexOf(ext) != -1){
+        template = type;
+        break;
+      }
+    }
+  }
+
+  return template;
+}
 
 module.exports = {
 
   getComponentTemplate: function(component, template){
-    var dir = app.getTempalteDir(),
+
+    var dir = app.getTempalteDir(component),
       templatePath;
 
     if (template){
-      templatePath = path.join(dir, component, template + '.js');
+      templatePath = path.join(dir, component, template + '.' + getExtension(component));
     } else {
-      templatePath = path.join(dir, component, component + '.js');
+      templatePath = path.join(dir, component, component + '.' + getExtension(component));
     }
 
     var content;
@@ -41,9 +71,11 @@ module.exports = {
     return template;
   },
 
-  getRjsTemplate: function(){
+  getRjsTemplate: function(component){
+    var template = getTemplateByExt(component);
+
     return fs.readFileSync(
-      path.join(path.dirname(fs.realpathSync(__filename)), '..', 'rjs', 'plugin-template.js'),
+      path.join(path.dirname(fs.realpathSync(__filename)), '..', 'rjs', template),
       {
         encoding: 'utf8'
       }

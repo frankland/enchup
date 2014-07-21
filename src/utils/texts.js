@@ -38,7 +38,7 @@ var Texts = {
       phrase = 'Phrase is not defined';
     }
 
-    var matches = phrase.match(/\{\s*[^\}]+\}:?[^\s]*/ig);
+    var matches = phrase.match(/\{\s*[^\}]+\}:?[^\s|\)]*/ig);
 
     if (matches && matches.length){
       for (var i = 0, size = matches.length; i < size; i++){

@@ -34,5 +34,15 @@ module.exports = {
     }
 
     return config.components;
+  },
+
+  getComponent: function(component){
+    var components = this.getComponents();
+
+    if (!components.hasOwnProperty(component)){
+      throw new Error('Component is not defined');
+    }
+
+    return components[component];
   }
 };
