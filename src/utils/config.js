@@ -36,6 +36,18 @@ module.exports = {
     return config.components;
   },
 
+  getParameters: function(){
+    var config = this.getConfig();
+
+    var parameters = {}
+
+    if (config.hasOwnProperty('parameters')){
+      parameters = config.parameters;
+    }
+
+    return parameters;
+  },
+
   getComponent: function(component){
     var components = this.getComponents();
 

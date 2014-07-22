@@ -206,6 +206,21 @@ define(function(){
       req(['text!'+path], function(value){
         onload(JSON.parse(value));
       });
+    },
+
+    normalize: function (name, normalize) {
+      var normalized;
+
+      if (name.split(':').length == 1){
+        var config = requirejs.s.contexts._.config;
+        var current = normalize('.').split('?')[0].replace(config.baseUrl, '');
+
+        normalized = config.baseUrl + getPath(name, current);
+      } else {
+        normalized = name;
+      }
+
+      return normalized;
     }
   }
 });

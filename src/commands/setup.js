@@ -36,6 +36,7 @@ function exists(options){
       deferred.reject(Utils.texts.err('setup.dir.exists'));
     }
   } else {
+    fs.mkdirSync(dir);
     deferred.resolve();
   }
 

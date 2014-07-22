@@ -74,9 +74,17 @@ module.exports = {
 
   compile: function(template, options){
 
+    var global = config.getParameters();
+
     for (var placeholder in options){
       if (options.hasOwnProperty(placeholder)){
         template = template.replace(new RegExp('{{\\s*'+ placeholder +'\\s*}}', 'g'), options[placeholder]);
+      }
+    }
+
+    for (var placeholder in global){
+      if (global.hasOwnProperty(placeholder)){
+        template = template.replace(new RegExp('{{\\s*'+ placeholder +'\\s*}}', 'g'), global[placeholder]);
       }
     }
 

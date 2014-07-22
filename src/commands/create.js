@@ -176,7 +176,7 @@ function create(path, component, template, options){
       if (content.length){
         tplName = 'default';
       } else {
-        'empty';
+        tplName = 'empty';
       }
     }
 
