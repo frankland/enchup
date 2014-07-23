@@ -1,16 +1,16 @@
 {
   "author": "tuchk4",
-  "name": "Enchup",
+  "name": "enchup",
   "description": "Enchup",
   "version": "0.0.1",
   "repository": {
-    "url": ""
+    "url": "https://github.com/tuchk4/enchup.git"
   },
   "keywords": [
-    "eva"
+    "enchup"
   ],
   "bin": {
-    "eva": "./bin/enchup"
+    "enchup": "./bin/enchup"
   },
   "dependencies": {
     "commander": "~2.2.0",
@@ -22,5 +22,11 @@
   },
   "engines": {
     "node": "*"
-  }
+  },
+  "main": "bin/enchup",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC"
 }
