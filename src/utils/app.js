@@ -6,48 +6,46 @@ module.exports = {
     return path.join('.', 'enchup');
   },
 
-  getTempalteDir: function(){
-    return path.join(this.getDir(), 'templates');
-  },
+  getTemplateDir: function(isRepoTemplates){
+    var dir;
+    if (isRepoTemplates){
+      dir = path.join(this.getDir(), this.getRepoTemplateDirName());
+    } else {
+      dir = path.join(this.getDir(), 'templates');
+    }
 
-  getRepoTempalteDir: function(){
-    return path.join(this.getDir(), this.getRepoTemplateDirName());
+    return dir;
   },
 
   getRepoTemplateDirName: function(){
-     return 'repo-templates';
+    return 'repo-templates';
   },
 
   getConfigName: function(){
     return 'enchup.yml';
   },
 
-  getDefaultRepo: function(){
+  getRepo: function(){
     return 'tuchk4/enchup-simple-struct';
   },
 
   getPluginsDir: function(){
-    return path.join(this.getDir(), this.getPluginsDirName());
+    return path.join(this.getDir(), 'plugins');
   },
 
-  getPluginsDirName: function(){
-    return 'enchup-rjs-plugins';
-  },
-
-  getRjsTemplatesDir: function(){
-    return path.join(this.getDir(), 'rjs-templates');
+  getPluginTemplatesDir: function(){
+    return path.join(this.getDir(), 'plugins-templates');
   },
 
   getTempDir: function(){
-    return path.join('/tmp', 'enchup-temp');
+    return path.join(this.getDir(), 'tmp');
   },
 
   getEnchupTree: function(){
     return [
-      ['file', this.getConfigName()],
+      ['file', this.getConfigName(), true],
       ['file', 'README.md'],
       ['dir', this.getRepoTemplateDirName()]
-//      ['dir', this.getPluginsDirName()]
     ];
   }
 };

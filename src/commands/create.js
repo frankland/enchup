@@ -1,23 +1,16 @@
 var Utils = require('../utils/include'),
-  mkdirp = require('mkdirp'),
-  fs = require('fs'),
-  Q = require('q');
+  Config = require('../utils/config'),
+  Templates = require('../utils/templates'),
+  Phrases = require('../utils/phrases'),
+  mkdir = require('mkdirp'),
+  join = require('path').join,
+  dirname = require('path').dirname,
+  fs = require('fs');
 
-function getPlaceholders(path, keys){
+function getPlaceholders(path){
 
-  var placeholders = path.match(/(:[^\/|:|\-|\.]+:?)/g);
-
-  if (!placeholders || !placeholders.length){
-    throw Utils.texts.err('create.wrong-format');
-  }
-
-  placeholders = placeholders.filter(unique);
-
-  if (!validate(keys, placeholders)){
-    throw Utils.texts.err('create.wrong-format');
-  }
-
-  var result = {};
+  var placeholders = path.match(/(:[^\/|:|\-|\.]+:?)/g).filter(unique),
+    result = [];
 
   for (var i = 0, size = placeholders.length; i < size; i++){
     var key = placeholders[i];
@@ -29,10 +22,7 @@ function getPlaceholders(path, keys){
       key = key.slice(0, -1);
     }
 
-    result[key] = {
-      placeholder: placeholders[i],
-      value: keys[i]
-    }
+    result.push(key);
   }
 
   return result;
@@ -43,169 +33,162 @@ function unique(value, index, self) {
 }
 
 function cutExtension(path){
-  return path.replace(/\.[^\.]+$/,'')
+  var result;
+  if (isFile(path)){
+    result = path.replace(/\.[^\.]+$/,'');
+  } else {
+    result = path;
+  }
+
+  return result;
 }
 
 function cutFileName(path){
   return path.match(/(.+)\//)[1];
 }
 
-function validate(keys, placeholders){
-  var result = true;
-
-  if (!keys.length || !placeholders.length){
-    result = false;
-  }
-
-  if (keys.length != placeholders.length){
-    result = false;
-  }
-
-  return result;
+function isFile(path){
+  return !!path.match(/\/.+\.([^.|\/]+)$/);
 }
 
-function loadDependencies(config, component){
-  var path = config[component];
-
-  var placeholders = path.match(/(\^[^\/|:|-]+:?)/g);
-
-  if (!placeholders || !placeholders.length){
-    return path;
-  }
-
-  placeholders = placeholders.filter(unique);
-
-  for (var i = 0, size = placeholders.length; i < size; i++){
-    var key = placeholders[i].slice(1);
-    if (!config.hasOwnProperty(key)){
-       throw new Utils.texts.err('create.wrong-format');
-    }
-
-    var sub = loadDependencies(config, key);
-
-    if (!sub){
-      throw new Utils.texts.err('create.wrong-format');
-    }
-
-    sub = cutFileName(sub);
-    path = path.replace(placeholders[i], sub);
-  }
-
-  return path;
-}
-
-function getPath(component, key, config){
-
-   var keys = key.split(':'),
-    path = false,
-    placeholders = {};
-
-  if (!config.hasOwnProperty(component)){
-    throw Utils.texts.err('create.no-component', {
-      component: component
-    });
-  } else {
-
-    path = loadDependencies(config, component);
-
-    placeholders = getPlaceholders(path, keys);
-
-    for (var name in placeholders){
-      if (placeholders.hasOwnProperty(name)){
-        var placeholder = placeholders[name];
-
-        var re = new RegExp(placeholder.placeholder, 'g');
-        path = path.replace(re, placeholder.value);
-      }
-    }
-  }
-
-  return {
-    path: Utils.path.join('.', path),
-    placeholders: placeholders
-  }
+function isForce(options){
+  return options.hasOwnProperty('force') && options.force;
 }
 
 function create(path, component, template, options){
 
-  var dir = Utils.path.dirname(path.path);
+  var dir = dirname(path.path);
 
   if (!fs.existsSync(dir)){
-    var result = mkdirp.sync(dir);
-
-    if (!result) {
-      throw Utils.texts.err('create.cannot-create-dir', {
+    if (mkdir.sync(dir) === null) {
+      throw Phrases.err('create.cannot-create-dir', {
         dir: dir
       });
     }
   }
 
-  var isWritable = false;
-
   if (fs.existsSync(path.path)){
-
-    if (!options.force){
-      throw Utils.texts.err('create.no-force');
-    } else {
+    if (isForce(options)){
       fs.unlinkSync(path.path);
-      isWritable = true;
+    } else {
+      throw Phrases.err('create.no-force');
     }
-  } else {
-    isWritable = true;
   }
 
-  if (isWritable){
+  var content = Templates.getComponentTemplate(component, template);
+  var compiled = Templates.compile(content, path.placeholders);
 
-    var content = Utils.templates.getComponentTemplate(component, template);
+  xxx
+  fs.writeFileSync(path.path, compiled);
 
-    var placeholders = {};
-    for (var item in path.placeholders){
-      if (path.placeholders.hasOwnProperty(item)){
-        placeholders[item] = path.placeholders[item].value;
-      }
-    }
-
-    var compiled = Utils.templates.compile(content, placeholders);
-
-    fs.writeFileSync(path.path, compiled);
-
-    var tplName =  '';
-    if (template){
-      tplName = template;
+  var tplName =  '';
+  if (template){
+    tplName = template;
+  } else {
+    if (content.length){
+      tplName = 'default';
     } else {
-      if (content.length){
-        tplName = 'default';
-      } else {
-        tplName = 'empty';
-      }
+      tplName = 'empty';
+    }
+  }
+
+  Utils.texts.log('create.success', {
+    component: component,
+    template: tplName,
+    path: path.path
+  });
+}
+
+function replacePath(path, key, replacements){
+  var result = [];
+
+  for (var i = 0, size = replacements.length; i < size; i++){
+    var withoutFileName = cutExtension(replacements[i]); //cutFileName(replacements[i]);
+
+    result.push(path.replace(key, withoutFileName));
+  }
+
+  return result;
+}
+
+function loadDependencies(component){
+
+  var list = Config.getPath(component),
+    result = [];
+
+  for (var i = 0, size = list.length; i < size; i++){
+    var path = list[i],
+      placeholders = path.match(/(\^[^\/|:|-]+:?)/g);
+
+    if (placeholders === null){
+      result.push(path);
+    } else if (placeholders.length === 1){
+      var parent = placeholders[0].slice(1),
+        parentPath = loadDependencies(parent);
+
+      result = result.concat(replacePath(path, placeholders[i], parentPath));
+    } else {
+      throw Phrases.err('create.wrong-config');
     }
 
-    Utils.texts.log('create.success', {
-      component: component,
-      template: tplName,
-      path: path.path
-    });
+  }
+
+  return result;
+}
+
+
+function getProperPath(list, keys){
+  var proper = {};
+
+  for (var i = 0, size = list.length; i < size; i++){
+    var placeholders = getPlaceholders(list[i], keys);
+
+    if (placeholders.length == keys.length){
+      if (!!Object.keys(proper).length){
+        throw Phrases.err('create.wrong-config');
+      }
+
+      proper.placeholders = placeholders;
+      proper.path = list[i];
+    }
+  }
+
+  return proper;
+}
+
+function getPath(component, key){
+
+  var keys = key.split(':'),
+    list = loadDependencies(component),
+    proper = getProperPath(list, keys),
+    path = proper.path,
+    placeholders = proper.placeholders,
+    scope = {};
+
+
+  if (!path){
+    throw Phrases.err('create.wrong-config');
+  }
+
+  for (var i = 0, size = placeholders.length; i < size; i++){
+    var placeholder = placeholders[i],
+      value = keys[i],
+      re = new RegExp(':' + placeholder, 'g');
+
+    scope[placeholder] = value;
+
+    path = path.replace(re, value);
+  }
+
+  return {
+    path: join('.', path),
+    placeholders: scope
   }
 }
 
-module.exports = {
+module.exports = function(component, key, template, options){
 
-  run: function(component, key, template, options){
+  var path = getPath(component, key);
 
-    var components = Utils.config.getComponents();
-
-    var deferred = Q.defer();
-
-    try {
-      var path = getPath(component, key, components);
-
-      create(path, component, template, options);
-
-      deferred.resolve();
-    } catch(e){
-      deferred.reject(e);
-    }
-
-    return deferred.promise;
-  }
+  create(path, component, template, options);
 };

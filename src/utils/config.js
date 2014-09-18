@@ -2,23 +2,21 @@ var fs = require('fs'),
  yaml = require('js-yaml'),
  path = require('path'),
  app = require('./app'),
- texts = require('./texts');
+ Phrases = require('./phrases');
 
 module.exports = {
 
-  getConfigFile: function(){
-
+  getConfigPath: function(){
     var dir = app.getDir();
     var name = app.getConfigName();
-
     return path.join(dir, name);
   },
 
-  getConfig: function(){
-    var configFile = this.getConfigFile();
+  asJson: function(){
+    var configFile = this.getConfigPath();
 
     if (!fs.existsSync(configFile)){
-      throw texts.err('config.unexist', {
+      throw Phrases.err('config.no-file', {
         file: configFile
       });
     }
@@ -27,34 +25,36 @@ module.exports = {
   },
 
   getComponents: function(){
-    var config = this.getConfig();
+    var config = this.asJson();
 
     if (!config.hasOwnProperty('components')){
-      throw texts.err('config.no-components');
+      throw Phrases.err('config.no-components');
     }
 
     return config.components;
   },
 
   getParameters: function(){
-    var config = this.getConfig();
+    var config = this.asJson();
 
-    var parameters = {}
-
-    if (config.hasOwnProperty('parameters')){
-      parameters = config.parameters;
-    }
-
-    return parameters;
+    return config.parameters || {};
   },
 
-  getComponent: function(component){
-    var components = this.getComponents();
-
-    if (!components.hasOwnProperty(component)){
+  getPath: function(component){
+    if (!this.hasComponent(component)){
       throw new Error('Component is not defined');
     }
 
-    return components[component];
+    var path = this.getComponents()[component];
+
+    if (!Array.isArray(path)){
+      path = [path];
+    }
+
+    return path;
+  },
+
+  hasComponent: function(component){
+    return this.getComponents().hasOwnProperty(component);
   }
 };
