@@ -1,0 +1,17 @@
+dir: enchup
+config: enchup/enchup.yml
+temp: enchup/tmp
+tree:
+  - [file, enchup.yml, true]
+  - [file, README.md]
+  - [dir, repo-templates]
+
+repository: tuchk4/enchup-simple-struct
+
+setup:
+
+info:
+
+create:
+
+

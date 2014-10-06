@@ -2,10 +2,10 @@
 
 "use strict";
 
-var path = require('path');
-var fs = require('fs');
+var path = require('path'),
+  fs = require('fs');
 
-var cli = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'src', 'program');
+var cli = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'new', 'program');
 
 require(cli).run();
 
