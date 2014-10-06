@@ -3,11 +3,13 @@
 var chalk = require('chalk'),
   Setup = require('./commands/setup/setup'),
   Info = require('./commands/info/info'),
+  Create = require('./commands/create/create'),
   path = require('path'),
   fs = require('fs'),
   ConfigInterface = require('./config');
 
 function err(e){
+  console.log(chalk.yellow('---------------'));
   console.log(chalk.red('Error happened :('));
   console.log(e.message);
   console.log(chalk.yellow('---------------'));
@@ -17,6 +19,7 @@ function err(e){
 }
 
 function success(){
+  console.log(chalk.yellow('---------------'));
   console.log(chalk.magenta('Done'));
   console.log(chalk.yellow('---------------'));
 }
@@ -48,7 +51,19 @@ var commands = {
   },
 
   create: function(component, name, template, options){
+    var command = new Create();
 
+    command.setConfig(Config);
+
+    command.setComponent(component);
+    command.setName(name);
+    command.setTemplate(template);
+    command.setOptions(options);
+
+
+    command.exec()
+      .then(success)
+      .catch(err);
   }
 };
 
