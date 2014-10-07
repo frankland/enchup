@@ -25,6 +25,7 @@ function setup(){
     program
       .command('create <component> <parameters> [template]')
       .option('-f, --force', 'Override if already exists')
+      .option('-c, --continue', 'Do not ovveride existing components')
       .description('Create components according to structure. <parameters> - :component..:component')
       .action(commands.create);
 }
