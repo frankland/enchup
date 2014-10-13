@@ -14,8 +14,8 @@ function err(e){
   console.log(e.message);
   console.log(chalk.yellow('---------------'));
 
-  // var stack = new Error().stack;
-  // console.log(stack);
+  var stack = new Error().stack;
+  console.log(chalk.yellow(stack));
 }
 
 function success(){
@@ -50,13 +50,13 @@ var commands = {
       .catch(err);
   },
 
-  create: function(component, name, template, options){
+  create: function(component, parameters, template, options){
     var command = new Create();
 
     command.setConfig(Config);
 
     command.setComponent(component);
-    command.setName(name);
+    command.setParameters(parameters);
     command.setTemplate(template);
     command.setOptions(options);
 
