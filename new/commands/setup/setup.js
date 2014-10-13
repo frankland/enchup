@@ -5,6 +5,7 @@ var Command = require('../command'),
   path = require('path'),
   exec = require('child_process').exec,
   rimraf = require('rimraf'),
+  mkdir = require('mkdirp').sync,
   InfoInterface = require('../info/info'),
   Setup = Command.extend({
 
@@ -56,7 +57,15 @@ var Command = require('../command'),
         temp = this.config.temp;
 
       for (var i = 0, size = tree.length; i < size; i++) {
-        fs.renameSync(path.join(temp, tree[i][1]), path.join(dir, tree[i][1]));
+        var from = path.join(temp, tree[i][1]),
+          to = path.join(dir, tree[i][1]);
+
+        if (tree[i][0] == 'dir'){
+          console.log('create', to);
+          mkdir(to);
+        }
+
+        fs.renameSync(from, to);
       }
     },
 

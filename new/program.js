@@ -18,7 +18,7 @@ function setup(){
       .action(commands.setup);
 
     program
-      .command('info')
+      .command('info [component]')
       .description('Show ecchup info accroding to current structure')
       .action(commands.info);
 

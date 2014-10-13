@@ -50,9 +50,8 @@ var Schema = Boop.extend({
 
 
   resolve: function (component) {
-    var path = this.get(component);
-
-    var placeholders = Placeholders.dependency(path),
+    var path = this.get(component),
+      placeholders = Placeholders.dependency(path),
       parsed = path;
 
     if (Types.isArray(placeholders)) {

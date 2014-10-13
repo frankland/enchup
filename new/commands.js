@@ -40,10 +40,12 @@ var commands = {
       .catch(err);
   },
 
-  info: function(){
+  info: function(component){
     var command = new Info();
 
     command.setConfig(Config);
+
+    command.setComponent(component);
 
     command.exec()
       .then(success)

@@ -4,15 +4,11 @@ var Command = require('../command'),
   fs = require('fs'),
   join = require('path').join,
   Types = require('../../utils/types'),
-  chalk = require('chalk'),
-  Y = chalk.yellow,
+  Chalk = require('chalk'),
   SchemaClass = require('./schema'),
   TemplateClass = require('./templates'),
   ComponentClass = require('./component'),
   Placeholders = require('./placeholders'),
-  log = function (m) {
-    console.log(Y(m));
-  },
   Create = Command.extend({
 
     initialize: function () {
@@ -188,15 +184,38 @@ var Command = require('../command'),
 
           if (ok){
             Component.save();
-            Y('Created:');
-            console.log(Component.name);
-            console.log(Component.source);
-            Y('-----');
+            this.log(Component);
           }
         }
       }
+    },
+
+    log: function(Component){
+      var y = Chalk.cyan,
+        u = Chalk.white.underline,
+        b = Chalk.blue,
+        log = console.log,
+        template = Component.template,
+        templatePath = this.Template.path(Component);
+
+      if (!template) {
+        if (!Component.source.length){
+          template = 'empty';
+        } else {
+          template = 'default';
+        }
+      }
+
+      log(b('+---'));
+      log(b('|   ') + y('Component created:') + ' ' + u(Component.name) + ' ' + y('at path:') + ' ' + u(Component.path));
+
+      if (!!templatePath){
+        log(b('|   ') +y('Using') + ' ' + u(template) + ' ' + y('template') + ' ' + y('at:') + ' ' + u(templatePath));
+      } else {
+        log(b('|   ') + y('Created without template because template was not found'));
+      }
+      log(b('+---'));
     }
   });
-
 
 module.exports = Create;

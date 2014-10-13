@@ -27,7 +27,7 @@ var Templates = Boop.extend({
     return template;
   },
 
-  get: function (Component) {
+  path: function(Component){
     var template = Component.template || 'default',
       dir = this.config.template_dir;
 
@@ -38,13 +38,21 @@ var Templates = Boop.extend({
       repoTemplate = join(dir, 'repo', Component.name, template),
       path;
 
+
     if (exists(appTemplate)) {
       path = appTemplate;
     } else if (exists(repoTemplate)) {
       path = repoTemplate;
     }
 
-    var source = '';
+    return path;
+  },
+
+
+  get: function (Component) {
+
+    var source = '',
+      path = this.path(Component);
 
     if (!!path) {
       source = read(path, 'utf8');
