@@ -1,7 +1,7 @@
 'use strict';
 
 var Command = require('../command'),
-  fs = require('fs'),
+  exists = require('fs').existsSync,
   join = require('path').join,
   Types = require('../../utils/types'),
   Chalk = require('chalk'),
@@ -165,6 +165,13 @@ var Command = require('../command'),
 
           Component.setTemplate(local.template);
           Component.setPath(local.path);
+
+          var script = join(this.config.scripts, Component.name + '.js');
+
+          if (exists(script)){
+            Component.setPostScript(script);
+          }
+
 
           var template = this.Template.compile(Component, parameters),
             ok = false;

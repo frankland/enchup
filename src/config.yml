@@ -1,6 +1,7 @@
 dir: enchup
 temp: enchup/tmp
 template_dir: enchup/templates
+scripts: enchup/post-scripts
 
 config: enchup/enchup.yml
 

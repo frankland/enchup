@@ -3,10 +3,13 @@
 var Boop = require('boop'),
   exists = require('fs').existsSync,
   write = require('fs').writeFileSync,
+  read = require('fs').readFileSync,
   mkdir = require('mkdirp').sync,
   dirname = require('path').dirname,
   normalize = require('path').normalize,
   join = require('path').join,
+  fs = require('fs'),
+  vm = require('vm'),
   rimraf = require('rimraf');
 
 var Component = Boop.extend({
@@ -22,13 +25,12 @@ var Component = Boop.extend({
     this.source = source;
   },
 
+  setPostScript: function (script) {
+    this.script = script;
+  },
 
   setPath: function (path) {
     this.path = path;
-  },
-
-  setPlaceholders: function (placeholders) {
-    this.placeholders = placeholders;
   },
 
   save: function () {
@@ -41,7 +43,25 @@ var Component = Boop.extend({
       }
     }
 
-    return write(path, this.source);
+    /**
+     * TODO: check write errors
+     */
+    write(path, this.source);
+
+    if (this.script) {
+
+      /**
+       * TODO: create correct context
+       */
+      var context = vm.createContext({
+        Component: this,
+        fs: fs,
+        console: console
+      });
+
+      var bin = read(this.script);
+      vm.runInContext(bin, context);
+    }
   },
 
   exists: function () {
