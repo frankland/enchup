@@ -34,6 +34,9 @@ var Component = Boop.extend({
   },
 
   save: function () {
+    /**
+     * TODO: refact normalize function
+     */
     var path = normalize(join('./', this.path)),
       dir = dirname(path);
 
@@ -65,7 +68,9 @@ var Component = Boop.extend({
   },
 
   exists: function () {
-    return exists(this.path);
+    var path = normalize(join('./', this.path));
+
+    return exists(path);
   },
 
   remove: function () {

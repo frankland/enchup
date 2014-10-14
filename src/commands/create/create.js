@@ -76,7 +76,8 @@ var Command = require('../command'),
 
     placeholders: function () {
       var config = this.Schema.get(this.component, true),
-        map;
+        map,
+        provide = {};
 
       if (Types.isString(config)) {
         var path = this.Schema.resolve(this.component);
@@ -84,9 +85,26 @@ var Command = require('../command'),
 
       } else if (Types.isObject(config)) {
         map = config.map.split(':');
+
+        if (config.hasOwnProperty('provide')) {
+          provide = config.provide;
+        }
       }
 
-      return Placeholders.map(map, this.parameters);
+      var placeholders = Placeholders.map(map, this.parameters);
+
+      for (var item in provide) {
+        if (provide.hasOwnProperty(item)) {
+          var value = provide[item];
+          if (value[0] == ':') {
+            value = placeholders[value.slice(1)];
+          }
+
+          placeholders[item] = value;
+        }
+      }
+
+      return placeholders;
     },
 
     components: function (placeholders) {
@@ -128,7 +146,14 @@ var Command = require('../command'),
         }
       }
 
+
+      parameters.date = new Date()
+        .toISOString()
+        .replace(/T/, ' ')
+        .replace(/\..+/, '');
+
       config.parameters = parameters;
+
 
       return config;
     },
@@ -149,10 +174,6 @@ var Command = require('../command'),
         .then(this.create.bind(this));
     },
 
-    prepare: function () {
-      return  this.getComponentConfig(this.component);
-    },
-
     create: function (config) {
       var components = config.components,
         parameters = config.parameters;
@@ -168,7 +189,7 @@ var Command = require('../command'),
 
           var script = join(this.config.scripts, Component.name + '.js');
 
-          if (exists(script)){
+          if (exists(script)) {
             Component.setPostScript(script);
           }
 
@@ -182,14 +203,14 @@ var Command = require('../command'),
             if (this.isForce()) {
               Component.remove();
               ok = true;
-            } else if (!this.isContinue()){
+            } else if (!this.isContinue()) {
               throw new Error('You should describe force or continue flag for existing files');
             }
           } else {
             ok = true;
           }
 
-          if (ok){
+          if (ok) {
             Component.save();
             this.log(Component);
           }
@@ -197,8 +218,12 @@ var Command = require('../command'),
       }
     },
 
-    log: function(Component){
-      var y = Chalk.cyan,
+    /**
+     * TODO: REFACTOR LOGGING!! 
+     */
+    log: function (Component) {
+      var c = Chalk.cyan,
+        y = Chalk.yellow,
         u = Chalk.white.underline,
         b = Chalk.blue,
         log = console.log,
@@ -206,22 +231,40 @@ var Command = require('../command'),
         templatePath = this.Template.path(Component);
 
       if (!template) {
-        if (!Component.source.length){
+        if (!Component.source.length) {
           template = 'empty';
         } else {
           template = 'default';
         }
       }
 
-      log(b('+---'));
-      log(b('|   ') + y('Component created:') + ' ' + u(Component.name) + ' ' + y('at path:') + ' ' + u(Component.path));
+      var l = [
+        ('Component created:' + ' ' + Component.name + ' ' + 'at path:' + ' ' + Component.path).length + 6,
+        ('Using' + ' ' + template + ' ' + 'template' + ' ' + 'at:' + ' ' + templatePath).length + 6
+      ];
 
-      if (!!templatePath){
-        log(b('|   ') +y('Using') + ' ' + u(template) + ' ' + y('template') + ' ' + y('at:') + ' ' + u(templatePath));
-      } else {
-        log(b('|   ') + y('Created without template because template was not found'));
+      var max = Math.max.apply(null, l);
+
+      function repeat(pattern, count) {
+        if (count < 1) return '';
+        var result = '';
+        while (count > 1) {
+          if (count & 1) result += pattern;
+          count >>= 1, pattern += pattern;
+        }
+        return result + pattern;
       }
-      log(b('+---'));
+
+      log(y('   +') + y(repeat('-', max)) + y('+'));
+      log(y('   |   ') + c('Component created:') + ' ' + u(Component.name) + ' ' + c('at path:') + ' ' + u(Component.path) + repeat(' ', max - l[0]) + y('   |'));
+
+      if (!!templatePath) {
+        log(b('   |   ') + c('Using') + ' ' + u(template) + ' ' + c('template') + ' ' + c('at:') + ' ' + u(templatePath) + repeat(' ', max - l[1]) + b('   |'));
+      } else {
+        log(b('   |   ') + c('Created without template because template was not found') + repeat(' ', max - 'Created without template because template was not found'.length) + b('   |'));
+      }
+
+      log(b('   +') + b(repeat('-', max)) + b('+'));
     }
   });
 
