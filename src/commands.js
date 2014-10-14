@@ -1,59 +1,71 @@
 "use strict";
 
 var chalk = require('chalk'),
-  setup = require('./commands/setup'),
-  info = require('./commands/info'),
-  generate = require('./commands/generate'),
-  create = require('./commands/create');
+  Setup = require('./commands/setup/setup'),
+  Info = require('./commands/info/info'),
+  Create = require('./commands/create/create'),
+  path = require('path'),
+  fs = require('fs'),
+  ConfigInterface = require('./config');
 
 function err(e){
+  console.log(chalk.yellow('---------------'));
   console.log(chalk.red('Error happened :('));
   console.log(e.message);
   console.log(chalk.yellow('---------------'));
 
-  // var stack = new Error().stack;
-  // console.log(stack);
+  var stack = new Error().stack;
+  console.log(chalk.yellow(stack));
 }
 
+function success(){
+  console.log(chalk.yellow('---------------'));
+  console.log(chalk.magenta('Done'));
+  console.log(chalk.yellow('---------------'));
+}
+
+
+var configFile = path.join(path.dirname(fs.realpathSync(__filename)), 'config.yml'),
+  Config = new ConfigInterface(configFile);
+
 var commands = {
-  setup: function(enchup, options){
-    try {
-      setup(enchup, options);
-    } catch (e){
-      err(e);
-    }
+  setup: function(repository, options){
+    var command = new Setup();
+
+    command.setOptions(options);
+    command.setConfig(Config);
+
+    command.exec(repository)
+      .then(success)
+      .catch(err);
   },
 
-  info: function(){
-    try {
-      info();
-    } catch (e){
-      err(e);
-    }
+  info: function(component){
+    var command = new Info();
+
+    command.setConfig(Config);
+
+    command.setComponent(component);
+
+    command.exec()
+      .then(success)
+      .catch(err);
   },
 
-  generate: function(options){
-//    var result;
-//
-//    if (options.hasOwnProperty('info') && options.info){
-//      result = generate
-//        .info()
-//        .catch(err);
-//    } else {
-//       result = generate
-//        .run()
-//        .catch(err);
-//    }
-//
-//    return result;
-  },
+  create: function(component, parameters, template, options){
+    var command = new Create();
 
-  create: function(component, name, template, options){
-    try {
-      create(component, name, template, options);
-    } catch (e){
-      err(e);
-    }
+    command.setConfig(Config);
+
+    command.setComponent(component);
+    command.setParameters(parameters);
+    command.setTemplate(template);
+    command.setOptions(options);
+
+
+    command.exec()
+      .then(success)
+      .catch(err);
   }
 };
 

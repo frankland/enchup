@@ -1,3 +1,5 @@
+'use strict';
+
 var program = require('commander'),
   commands = require('./commands'),
   config = require('../package.json');
@@ -10,31 +12,28 @@ function setup(){
       .version(config.version);
 
     program
-      .command('setup [enchup]')
+      .command('setup [repository]')
       .option('-f, --force', 'Clear directory if it is not empty')
       .description('Initialize application structure. Plugins will be generated automatically.')
       .action(commands.setup);
 
     program
-      .command('info')
+      .command('info [component]')
       .description('Show ecchup info accroding to current structure')
       .action(commands.info);
 
     program
-      .command('generate')
-      .option('-i, --info', 'Show info about plugins')
-      .description('Generate requriejs plugins')
-      .action(commands.generate);
-
-
-    program
       .command('create <component> <parameters> [template]')
-      .option('-f, --force', 'Override if already exists')
+      .option('-f, --force', 'cverride if already exists')
+      .option('-c, --continue', 'do not ovveride existing components if multiple')
       .description('Create components according to structure. <parameters> - :component..:component')
       .action(commands.create);
 }
 
-var available = ['setup', 'generate', 'info', 'create'];
+/**
+ * Remove this arr
+ */
+var available = ['setup', 'info', 'create'];
 
 module.exports = {
 
