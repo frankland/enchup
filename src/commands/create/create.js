@@ -219,7 +219,7 @@ var Command = require('../command'),
     },
 
     /**
-     * TODO: REFACTOR LOGGING!! 
+     * TODO: REFACTOR LOGGING!!
      */
     log: function (Component) {
       var c = Chalk.cyan,
@@ -255,16 +255,16 @@ var Command = require('../command'),
         return result + pattern;
       }
 
-      log(y('   +') + y(repeat('-', max)) + y('+'));
-      log(y('   |   ') + c('Component created:') + ' ' + u(Component.name) + ' ' + c('at path:') + ' ' + u(Component.path) + repeat(' ', max - l[0]) + y('   |'));
+      log(b('   +') + b(repeat('-', max)) + b('+'));
+      log(b('   |   ') + c('Component created:') + ' ' + u(Component.name) + ' ' + c('at path:') + ' ' + u(Component.path) + repeat(' ', max - l[0]) + b('   |'));
 
       if (!!templatePath) {
-        log(b('   |   ') + c('Using') + ' ' + u(template) + ' ' + c('template') + ' ' + c('at:') + ' ' + u(templatePath) + repeat(' ', max - l[1]) + b('   |'));
+        log(y('   |   ') + c('Using') + ' ' + u(template) + ' ' + c('template') + ' ' + c('at:') + ' ' + u(templatePath) + repeat(' ', max - l[1]) + y('   |'));
       } else {
-        log(b('   |   ') + c('Created without template because template was not found') + repeat(' ', max - 'Created without template because template was not found'.length) + b('   |'));
+        log(y('   |   ') + c('Created without template because template was not found') + repeat(' ', max - 'Created without template because template was not found'.length) + y('   |'));
       }
 
-      log(b('   +') + b(repeat('-', max)) + b('+'));
+      log(y('   +') + y(repeat('-', max)) + y('+'));
     }
   });
 
