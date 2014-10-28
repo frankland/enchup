@@ -36,7 +36,7 @@ var Config = Boop.extend({
   },
 
   loadUserConfig: function(){
-    var file = this['build-enchup'];
+    var file = this['user-config'];
 
     if (exists(file)){
       this.user_config = {};
@@ -51,7 +51,7 @@ var Config = Boop.extend({
   },
 
   loadBuildConfig: function(){
-    var file = this['build-enchup'];
+    var file = this['build-config'];
 
     if (exists(file)){
       this.build_config = {};
