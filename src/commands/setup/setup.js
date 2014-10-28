@@ -6,7 +6,6 @@ var Command = require('../command'),
   exec = require('child_process').exec,
   rimraf = require('rimraf'),
   mkdir = require('mkdirp').sync,
-  InfoInterface = require('../info/info'),
   Setup = Command.extend({
 
     initialize: function () {
@@ -15,14 +14,10 @@ var Command = require('../command'),
 
     exec: function (repository) {
 
-      var Info = new InfoInterface();
-      Info.setConfig(this.config);
-
       return this.flow()
         .then(this.prepare.bind(this))
         .then(this.create.bind(this))
-        .then(this.clone.bind(this, repository || this.config.repository))
-        .then(Info.exec.bind(Info));
+        .then(this.clone.bind(this, repository || this.config.repository));
     },
 
 
@@ -61,7 +56,6 @@ var Command = require('../command'),
           to = path.join(dir, tree[i][1]);
 
         if (tree[i][0] == 'dir'){
-          console.log('create', to);
           mkdir(to);
         }
 

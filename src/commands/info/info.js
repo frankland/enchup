@@ -25,9 +25,9 @@ var Command = require('../command'),
 
     detailed: function(){
       if (this.component){
-        var Schema = new SchemaClass(this.config.app.components);
+        var Schema = new SchemaClass(this.config.app_config.components);
 
-        var components = this.config.app.components;
+        var components = this.config.app_config.components;
 
         if (!components.hasOwnProperty(this.component)){
           throw new Error('Component does not exists');
@@ -49,30 +49,32 @@ var Command = require('../command'),
     },
 
     info: function () {
+
       var config = this.config;
 
-      if (!config.hasOwnProperty('app')){
-        throw new Error('App config does not exists');
+
+      if (!config.hasOwnProperty('app_config')){
+        throw new Error('Info: App config does not exists');
       }
 
-      if (config.app.hasOwnProperty('name')) {
-        console.log(config.app.name);
+      if (config.app_config.hasOwnProperty('name')) {
+        console.log(config.app_config.name);
       }
 
-      if (config.app.hasOwnProperty('author')) {
-        console.log(config.app.author);
+      if (config.app_config.hasOwnProperty('author')) {
+        console.log(config.app_config.author);
       }
 
-      if (config.app.hasOwnProperty('version')) {
-        console.log(config.app.version);
+      if (config.app_config.hasOwnProperty('version')) {
+        console.log(config.app_config.version);
       }
 
-      if (config.app.hasOwnProperty('description')) {
-        console.log(config.app.description);
+      if (config.app_config.hasOwnProperty('description')) {
+        console.log(config.app_config.description);
       }
 
-      if (config.app.hasOwnProperty('readme')) {
-        console.log(config.app.readme);
+      if (config.app_config.hasOwnProperty('readme')) {
+        console.log(config.app_config.readme);
       }
     }
   });

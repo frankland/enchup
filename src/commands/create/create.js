@@ -138,10 +138,10 @@ var Command = require('../command'),
     merge: function (config) {
       var parameters = config.placeholders;
 
-      if (this.config.app.parameters) {
-        for (var key in this.config.app.parameters) {
-          if (this.config.app.parameters.hasOwnProperty(key)) {
-            parameters[key] = this.config.app.parameters[key];
+      if (this.config.app_config.parameters) {
+        for (var key in this.config.app_config.parameters) {
+          if (this.config.app_config.parameters.hasOwnProperty(key)) {
+            parameters[key] = this.config.app_config.parameters[key];
           }
         }
       }
@@ -160,7 +160,7 @@ var Command = require('../command'),
 
 
     exec: function () {
-      this.Schema = new SchemaClass(this.config.app.components);
+      this.Schema = new SchemaClass(this.config.app_config.components);
       this.Template = new TemplateClass(this.config);
 
       if (this.isForce() && this.isContinue()) {

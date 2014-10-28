@@ -3,7 +3,9 @@ temp: enchup/tmp
 template_dir: enchup/templates
 scripts: enchup/post-scripts
 
-config: enchup/enchup.yml
+app-config: enchup/enchup.yml
+user-config: enchup/user-enchup.yml
+build-config: enchup/build-enchup.yml
 
 tree:
   - [file, enchup.yml, true]

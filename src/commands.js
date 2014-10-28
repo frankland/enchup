@@ -36,6 +36,13 @@ var commands = {
     command.setConfig(Config);
 
     command.exec(repository)
+      .then(function(){
+        var command = new Info(),
+          Config = new ConfigInterface(configFile);
+
+        command.setConfig(Config);
+        return command.exec();
+      })
       .then(success)
       .catch(err);
   },
