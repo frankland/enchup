@@ -20,11 +20,17 @@ var Command = require('../command'),
     },
 
     setComponent: function (component) {
-      this.component = component;
+      this.component = component
     },
 
     setParameters: function (parameters) {
       this.parameters = parameters;
+    },
+
+    validate: function(){
+      if (/\/|\\/.test(this.parameters)){
+        throw new Error('Do not use directory separators for describing component\'s parameters. Use dots \'.\'');
+      }
     },
 
     setTemplate: function (template) {
@@ -136,12 +142,29 @@ var Command = require('../command'),
     },
 
     merge: function (config) {
-      var parameters = config.placeholders;
+      var parameters = {},
+        key;
+
+      for (key in config.placeholders) {
+        if (config.placeholders.hasOwnProperty(key)){
+          var parameter = config.placeholders[key];
+
+          parameters[key] = parameter.replace(/\/|\\/g, '.');
+        }
+      }
 
       if (this.config.app_config.parameters) {
-        for (var key in this.config.app_config.parameters) {
+        for (key in this.config.app_config.parameters) {
           if (this.config.app_config.parameters.hasOwnProperty(key)) {
             parameters[key] = this.config.app_config.parameters[key];
+          }
+        }
+      }
+
+      if (this.config.user_config) {
+        for (key in this.config.user_config) {
+          if (this.config.user_config.hasOwnProperty(key)) {
+            parameters[key] = this.config.user_config[key];
           }
         }
       }
@@ -160,6 +183,8 @@ var Command = require('../command'),
 
 
     exec: function () {
+
+
       this.Schema = new SchemaClass(this.config.app_config.components);
       this.Template = new TemplateClass(this.config);
 
@@ -168,6 +193,7 @@ var Command = require('../command'),
       }
 
       return this.flow()
+        .then(this.validate.bind(this))
         .then(this.placeholders.bind(this))
         .then(this.components.bind(this))
         .then(this.merge.bind(this))
@@ -178,7 +204,7 @@ var Command = require('../command'),
       var components = config.components,
         parameters = config.parameters;
 
-      for (var name in  components) {
+      for (var name in components) {
         if (components.hasOwnProperty(name)) {
 
           var local = components[name],

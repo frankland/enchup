@@ -1,5 +1,8 @@
 'use strict';
 
+var DS = require('path').sep;
+
+
 var Placeholders = {
   parse: function (path) {
     return path.match(/:([^\/|\\|:|\-|\.]+)/g).filter(function (value, index, self) {
@@ -9,8 +12,8 @@ var Placeholders = {
     });
   },
 
-  map: function (placeholders, key) {
-    var keys = key.split(':'),
+  map: function (placeholders, parameters) {
+    var keys = parameters.replace(/\./g, DS).split(':'),
       map = {};
 
     if (placeholders.length != keys.length){
