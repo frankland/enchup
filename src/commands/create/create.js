@@ -37,49 +37,6 @@ var Command = require('../command'),
       this.template = template;
     },
 
-    getComponentConfig: function (component) {
-      var config = this.Schema.get(component, true),
-        map,
-        result = {};
-
-
-      result.components = {};
-      if (Types.isString(config)) {
-        //result.map = Placeholders.map(map, this.parameters);
-
-        var path = this.Schema.resolve(component);
-        map = Placeholders.parse(path);
-
-        result.components[this.component] = {
-          path: path,
-          template: this.template
-        }
-      } else if (Types.isObject(config)) {
-
-        if (!config.hasOwnProperty('map') || !config.hasOwnProperty('components')) {
-          throw new Error('For complex components "map" and "components" should be defined');
-        }
-
-        map = config.map.split(':');
-        result.map = Placeholders.map(map, this.parameters);
-
-        var components = config.components;
-        for (var name in components) {
-          if (components.hasOwnProperty(name)) {
-            result.components[name] = {
-              path: this.Schema.resolve(name),
-              template: components[name]
-            }
-          }
-        }
-      } else {
-        throw new Error('Component config could be only string or object');
-      }
-
-
-      return result;
-    },
-
     placeholders: function () {
       var config = this.Schema.get(this.component, true),
         map,
