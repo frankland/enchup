@@ -4,9 +4,10 @@ var chalk = require('chalk'),
   Setup = require('./commands/setup/setup'),
   Info = require('./commands/info/info'),
   Create = require('./commands/create/create'),
+  Build = require('./commands/build/build'),
   path = require('path'),
   fs = require('fs'),
-  ConfigInterface = require('./config');
+  ConfigClass = require('./config');
 
 function err(e){
   console.log(chalk.yellow('---------------'));
@@ -26,7 +27,7 @@ function success(){
 
 
 var configFile = path.join(path.dirname(fs.realpathSync(__filename)), 'config.yml'),
-  Config = new ConfigInterface(configFile);
+  Config = new ConfigClass(configFile);
 
 var commands = {
   setup: function(repository, options){
@@ -38,7 +39,7 @@ var commands = {
     command.exec(repository)
       .then(function(){
         var command = new Info(),
-          Config = new ConfigInterface(configFile);
+          Config = new ConfigClass(configFile);
 
         command.setConfig(Config);
         return command.exec();
@@ -53,6 +54,16 @@ var commands = {
     command.setConfig(Config);
 
     command.setComponent(component);
+
+    command.exec()
+      .then(success)
+      .catch(err);
+  },
+
+  build: function(){
+    var command = new Build();
+
+    command.setConfig(Config);
 
     command.exec()
       .then(success)

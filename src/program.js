@@ -19,8 +19,13 @@ function setup(){
 
     program
       .command('info [component]')
-      .description('Show ecchup info accroding to current structure')
+      .description('Show enchup info accroding to current structure')
       .action(commands.info);
+
+    program
+      .command('build')
+      .description('Build application')
+      .action(commands.build);
 
     program
       .command('create <component> <parameters> [template]')
@@ -33,7 +38,7 @@ function setup(){
 /**
  * Remove this arr
  */
-var available = ['setup', 'info', 'create'];
+var available = ['setup', 'info', 'create', 'build'];
 
 module.exports = {
 
