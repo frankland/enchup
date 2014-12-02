@@ -23,11 +23,6 @@ function setup(){
       .action(commands.info);
 
     program
-      .command('build')
-      .description('Build application')
-      .action(commands.build);
-
-    program
       .command('create <component> <parameters> [template]')
       .option('-f, --force', 'cverride if already exists')
       .option('-c, --continue', 'do not ovveride existing components if multiple')
@@ -38,7 +33,7 @@ function setup(){
 /**
  * Remove this arr
  */
-var available = ['setup', 'info', 'create', 'build'];
+var available = ['setup', 'info', 'create'];
 
 module.exports = {
 

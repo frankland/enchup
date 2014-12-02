@@ -4,7 +4,6 @@ var chalk = require('chalk'),
   Setup = require('./commands/setup/setup'),
   Info = require('./commands/info/info'),
   Create = require('./commands/create/create'),
-  Build = require('./commands/build/build'),
   path = require('path'),
   fs = require('fs'),
   ConfigClass = require('./config');
@@ -54,16 +53,6 @@ var commands = {
     command.setConfig(Config);
 
     command.setComponent(component);
-
-    command.exec()
-      .then(success)
-      .catch(err);
-  },
-
-  build: function(){
-    var command = new Build();
-
-    command.setConfig(Config);
 
     command.exec()
       .then(success)

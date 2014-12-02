@@ -17,7 +17,6 @@ var Config = Boop.extend({
 
     this.loadAppConfig();
     this.loadUserConfig();
-    this.loadBuildConfig();
   },
 
   loadAppConfig: function(){
@@ -45,21 +44,6 @@ var Config = Boop.extend({
       for (var item in arr){
         if (arr.hasOwnProperty(item)){
           this.user_config[item] = arr[item];
-        }
-      }
-    }
-  },
-
-  loadBuildConfig: function(){
-    var file = this['build-config'];
-
-    if (exists(file)){
-      this.build_config = {};
-
-      var arr = yaml.safeLoad(read(file, 'utf8'));
-      for (var item in arr){
-        if (arr.hasOwnProperty(item)){
-          this.build_config[item] = arr[item];
         }
       }
     }

@@ -63,23 +63,6 @@ var Command = Boop.extend({
 
     return q.promise;
   }
-//  flow: function(){
-//
-//    var then = function(expr){
-//
-//      if (!this.isRejected()){
-//        expr.call(this);
-//      }
-//
-//      return {
-//        then: then
-//      };
-//    }.bind(this);
-//
-//    return {
-//      then: then
-//    }
-//  }
 });
 
 
