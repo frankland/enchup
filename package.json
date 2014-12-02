@@ -2,7 +2,7 @@
   "author": "tuchk4",
   "name": "enchup",
   "description": "Enchup",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": {
     "url": "https://github.com/tuchk4/enchup.git"
   },
@@ -13,20 +13,21 @@
     "enchup": "./bin/enchup"
   },
   "dependencies": {
-
-  },
-  "engines": {
-    "node": "*"
-  },
-  "main": "src/commands",
-  "devDependencies": {
     "commander": "~2.2.0",
     "mkdirp": "~0.3.5",
     "rimraf": "~2.2.1",
     "js-yaml": "3.0.2",
     "chalk": "~0.4.0",
     "q": "~1.0.1",
-    "boop": "0.0.2"
+    "boop": "0.0.2",
+    "chalk": "0.4.0"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "main": "src/commands",
+  "devDependencies": {
+
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
