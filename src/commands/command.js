@@ -1,75 +1,75 @@
 'use strict';
 
 var Boop = require('boop'),
-  Promise = require('q');
+    Promise = require('q');
 
 
 var Command = Boop.extend({
-  createDeferred: function(){
+  createDeferred: function() {
     return Promise.defer();
   },
 
-  reject: function(message){
+  reject: function(message) {
     this.rejected = true;
     this.getDeferred().reject(new Error(message));
   },
 
-  isRejected: function(){
+  isRejected: function() {
     return !!this.rejected;
   },
 
-  resolve: function(message){
+  resolve: function(message) {
     this.resolved = true;
     this.getDeferred().resolve(message);
   },
 
-  isResolved: function(){
+  isResolved: function() {
     return !!this.resolved;
   },
 
-  initPromise: function(){
+  initPromise: function() {
     this.deferred = this.createDeferred();
     this.promise = this.deferred.promise;
   },
 
-  getDeferred: function(){
+  getDeferred: function() {
     return this.deferred;
   },
 
-  getPromise: function(){
+  getPromise: function() {
     return this.promise;
   },
 
-  setOptions: function(options){
+  setOptions: function(options) {
     this.options = options;
   },
 
-  setConfig: function(config){
+  setConfig: function(config) {
     this.config = config;
   },
 
-  getConfig: function(){
+  getConfig: function() {
     return this.config;
   },
 
-  isForce: function(){
+  isForce: function() {
     return this.options && this.options.force === true;
   },
 
-  validate: function(){
+  validate: function() {
     var config = this.config;
 
-    if (!config.hasOwnProperty('app_config')){
+    if (!config.hasOwnProperty('app_config')) {
 
       var message = 'Application config does not exist. ' +
-        'Try to use `enchup setup` before using other commands. ' +
-        'Also you can check official doc to get more information (link).';
+          'Try to use `enchup setup` before using other commands. ' +
+          'Also you can check official doc to get more information (link).';
 
       throw new Error(message);
     }
   },
 
-  flow: function(){
+  flow: function() {
     var q = this.getDeferred();
 
     q.resolve();

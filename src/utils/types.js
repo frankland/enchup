@@ -10,8 +10,8 @@ var objectTypes = {
 };
 
 var toString = Object.prototype.toString,
-  arrayClass = '[object Array]',
-  funcClass = '[object Function]';
+    arrayClass = '[object Array]',
+    funcClass = '[object Function]';
 
 var isObject = function(value) {
   return !!(value && objectTypes[typeof value]);
@@ -19,7 +19,7 @@ var isObject = function(value) {
 
 var isArray = function(value) {
   return value && typeof value == 'object' && typeof value.length == 'number' &&
-    toString.call(value) == arrayClass || false;
+      toString.call(value) == arrayClass || false;
 };
 
 var isString = function(value) {

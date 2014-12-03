@@ -1,44 +1,44 @@
 'use strict';
 
 var Boop = require('boop'),
-  exists = require('fs').existsSync,
-  write = require('fs').writeFileSync,
-  read = require('fs').readFileSync,
-  mkdir = require('mkdirp').sync,
-  dirname = require('path').dirname,
-  normalize = require('path').normalize,
-  join = require('path').join,
-  fs = require('fs'),
-  vm = require('vm'),
-  rimraf = require('rimraf');
+    exists = require('fs').existsSync,
+    write = require('fs').writeFileSync,
+    read = require('fs').readFileSync,
+    mkdir = require('mkdirp').sync,
+    dirname = require('path').dirname,
+    normalize = require('path').normalize,
+    join = require('path').join,
+    fs = require('fs'),
+    vm = require('vm'),
+    rimraf = require('rimraf');
 
 var Component = Boop.extend({
-  initialize: function (name) {
+  initialize: function(name) {
     this.name = name;
   },
 
-  setTemplate: function (template) {
+  setTemplate: function(template) {
     this.template = template;
   },
 
-  setSource: function (source) {
+  setSource: function(source) {
     this.source = source;
   },
 
-  setPostScript: function (script) {
+  setPostScript: function(script) {
     this.script = script;
   },
 
-  setPath: function (path) {
+  setPath: function(path) {
     this.path = path;
   },
 
-  save: function () {
+  save: function() {
     /**
      * TODO: refact normalize function
      */
     var path = normalize(join('./', this.path)),
-      dir = dirname(path);
+        dir = dirname(path);
 
     if (!exists(dir)) {
       if (mkdir(dir) === null) {
@@ -67,13 +67,13 @@ var Component = Boop.extend({
     }
   },
 
-  exists: function () {
+  exists: function() {
     var path = normalize(join('./', this.path));
 
     return exists(path);
   },
 
-  remove: function () {
+  remove: function() {
     rimraf.sync(this.path);
   }
 });

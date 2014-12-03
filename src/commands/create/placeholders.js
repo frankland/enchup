@@ -2,19 +2,19 @@
 
 
 var Placeholders = {
-  parse: function (path) {
-    return path.match(/:([^\/|\\|:|\-|\.]+)/g).filter(function (value, index, self) {
+  parse: function(path) {
+    return path.match(/:([^\/|\\|:|\-|\.]+)/g).filter(function(value, index, self) {
       return self.indexOf(value) === index
-    }).map(function(value){
+    }).map(function(value) {
       return value.slice(1);
     });
   },
 
-  map: function (placeholders, parameters) {
+  map: function(placeholders, parameters) {
     var keys = parameters.split(':'),
-      map = {};
+        map = {};
 
-    if (placeholders.length != keys.length){
+    if (placeholders.length != keys.length) {
       throw new Error('Wrong component key. Expected: ' + placeholders.join(', '));
     }
 
@@ -25,7 +25,7 @@ var Placeholders = {
     return map;
   },
 
-  dependency: function (path) {
+  dependency: function(path) {
     return path.match(/(\^[^\/|:|-]+:?)/g)
   }
 };
