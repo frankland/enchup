@@ -33,7 +33,7 @@ function setup(){
 /**
  * Remove this arr
  */
-var available = ['setup', 'info', 'create'];
+var available = ['setup', 'info', 'create', '-V', '--version'];
 
 module.exports = {
 
