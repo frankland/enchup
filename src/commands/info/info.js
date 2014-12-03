@@ -40,13 +40,25 @@ var Command = require('../command'),
           console.log(Chalk.blue('+--------------'));
           if (Types.isString(component)) {
 
-            console.log(Chalk.green(Placeholders.parse(component).join(':')));
-            console.log(Chalk.blue(Schema.resolve(this.component)));
+
+            var name = this.component;
+            console.log('| component: ' + Chalk.cyan(name));
+
+            var map = Placeholders.parse(component).join(':');
+            console.log('| parameters map: ' + Chalk.green(map));
+
+            var path = Schema.resolve(this.component);
+            console.log('| path: ' + path);
 
           } else if (Types.isObject(component)) {
 
             console.log('| component: ' + Chalk.cyan(this.component));
             console.log('| parameters map: ' + Chalk.green(component.map));
+
+            if (component.path) {
+              var path = Schema.resolve(this.component);
+              console.log('| path: ' + path);
+            }
 
 
             if (Types.isObject(component.provide)) {
@@ -67,11 +79,17 @@ var Command = require('../command'),
             }
 
 
-            console.log('| ');
-            console.log('| will be created: ');
+            if (Types.isArray(component.components)){
+              console.log('| ');
+              console.log('| relative components: ');
 
-            for (var item in component.components) {
-              console.log('|  - ' + Chalk.green(item) + ' using ' + Chalk.underline(component.components[item] || 'default') + ' template');
+              for (var i = 0, size = component.components.length; i < size; i++) {
+                var item = component.components[i].split(':'),
+                    name = item[0],
+                    template = item[1] || 'default';
+
+                console.log('|  - ' + Chalk.green(name) + ' using ' + Chalk.underline(template) + ' template');
+              }
             }
           }
 
