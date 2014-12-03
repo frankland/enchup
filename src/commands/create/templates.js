@@ -6,6 +6,7 @@ var Boop = require('boop'),
   exists = require('fs').existsSync,
   extname = require('path').extname;
 
+
 var Templates = Boop.extend({
   initialize: function (config) {
     this.config = config;
@@ -17,7 +18,7 @@ var Templates = Boop.extend({
 
     for (var param in parameters) {
       if (parameters.hasOwnProperty(param)) {
-        var value = parameters[param],
+        var value = parameters[param].replace(/\//g, '.'),
           expr = new RegExp('{{\\s*' + param + '\\s*}}', 'g');
 
         template = template.replace(expr, value);

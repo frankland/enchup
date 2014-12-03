@@ -1,7 +1,5 @@
 'use strict';
 
-var DS = require('path').sep;
-
 
 var Placeholders = {
   parse: function (path) {
@@ -13,7 +11,7 @@ var Placeholders = {
   },
 
   map: function (placeholders, parameters) {
-    var keys = parameters.replace(/\./g, DS).split(':'),
+    var keys = parameters.split(':'),
       map = {};
 
     if (placeholders.length != keys.length){

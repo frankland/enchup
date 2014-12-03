@@ -56,6 +56,19 @@ var Command = Boop.extend({
     return this.options && this.options.force === true;
   },
 
+  validate: function(){
+    var config = this.config;
+
+    if (!config.hasOwnProperty('app_config')){
+
+      var message = 'Application config does not exist. ' +
+        'Try to use `enchup setup` before using other commands. ' +
+        'Also you can check official doc to get more information (link).';
+
+      throw new Error(message);
+    }
+  },
+
   flow: function(){
     var q = this.getDeferred();
 

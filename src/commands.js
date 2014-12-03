@@ -9,21 +9,13 @@ var chalk = require('chalk'),
   ConfigClass = require('./config');
 
 function err(e){
-  console.log(chalk.yellow('---------------'));
-  console.log(chalk.red('Error happened :('));
+  console.log(chalk.red('Something went wrong'));
   console.log(e.message);
-  console.log(chalk.yellow('---------------'));
-
-  var stack = new Error().stack;
-  console.log(chalk.yellow(stack));
 }
 
 function success(){
-  console.log(chalk.yellow('---------------'));
-  console.log(chalk.magenta('Done'));
-  console.log(chalk.yellow('---------------'));
+  console.log(chalk.green('Done'));
 }
-
 
 var configFile = path.join(path.dirname(fs.realpathSync(__filename)), 'config.yml'),
   Config = new ConfigClass(configFile);

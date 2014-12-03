@@ -15,6 +15,26 @@ var Command = require('../command'),
       this.initPromise();
     },
 
+    exec: function () {
+
+      if (this.isForce() && this.isContinue()) {
+        throw new Error('Force and Continue flags could not be used at same time');
+      }
+
+      return this.flow()
+        .then(this.validate.bind(this))
+        .then(this.prepare.bind(this))
+        .then(this.placeholders.bind(this))
+        .then(this.components.bind(this))
+        .then(this.merge.bind(this))
+        .then(this.create.bind(this));
+    },
+
+    prepare: function(){
+      this.Schema = new SchemaClass(this.config.app_config.components);
+      this.Template = new TemplateClass(this.config);
+    },
+
     isContinue: function () {
       return !!this.options.continue;
     },
@@ -25,12 +45,6 @@ var Command = require('../command'),
 
     setParameters: function (parameters) {
       this.parameters = parameters;
-    },
-
-    validate: function(){
-      if (/\/|\\/.test(this.parameters)){
-        throw new Error('Do not use directory separators for describing component\'s parameters. Use dots \'.\'');
-      }
     },
 
     setTemplate: function (template) {
@@ -71,6 +85,8 @@ var Command = require('../command'),
     },
 
     components: function (placeholders) {
+
+
       var config = this.Schema.get(this.component, true),
         components = {};
 
@@ -102,11 +118,12 @@ var Command = require('../command'),
       var parameters = {},
         key;
 
+
       for (key in config.placeholders) {
         if (config.placeholders.hasOwnProperty(key)){
-          var parameter = config.placeholders[key];
+          parameters[key] = config.placeholders[key];
 
-          parameters[key] = parameter.replace(/\/|\\/g, '.');
+          //parameters[key] = parameter.replace(/\/|\\/g, '.');
         }
       }
 
@@ -134,28 +151,9 @@ var Command = require('../command'),
 
       config.parameters = parameters;
 
-
       return config;
     },
 
-
-    exec: function () {
-
-
-      this.Schema = new SchemaClass(this.config.app_config.components);
-      this.Template = new TemplateClass(this.config);
-
-      if (this.isForce() && this.isContinue()) {
-        throw new Error('Force and Continue flags could not be used at same time');
-      }
-
-      return this.flow()
-        .then(this.validate.bind(this))
-        .then(this.placeholders.bind(this))
-        .then(this.components.bind(this))
-        .then(this.merge.bind(this))
-        .then(this.create.bind(this));
-    },
 
     create: function (config) {
       var components = config.components,
@@ -166,6 +164,7 @@ var Command = require('../command'),
 
           var local = components[name],
             Component = new ComponentClass(name);
+
 
           Component.setTemplate(local.template);
           Component.setPath(local.path);
@@ -187,7 +186,7 @@ var Command = require('../command'),
               Component.remove();
               ok = true;
             } else if (!this.isContinue()) {
-              throw new Error('You should describe force or continue flag for existing files');
+              throw new Error('You should use force (-f) or continue (-c) flag for existing files');
             }
           } else {
             ok = true;

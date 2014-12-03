@@ -19,6 +19,7 @@ var Command = require('../command'),
     exec: function () {
 
       return this.flow()
+        .then(this.validate.bind(this))
         .then(this.info.bind(this))
         .then(this.detailed.bind(this));
     },
@@ -51,11 +52,6 @@ var Command = require('../command'),
     info: function () {
 
       var config = this.config;
-
-
-      if (!config.hasOwnProperty('app_config')){
-        throw new Error('Info: App config does not exists');
-      }
 
       if (config.app_config.hasOwnProperty('name')) {
         console.log(config.app_config.name);
