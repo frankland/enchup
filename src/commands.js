@@ -2,6 +2,7 @@
 
 var chalk = require('chalk'),
     Setup = require('./commands/setup/setup'),
+    Init = require('./commands/init/init'),
     Info = require('./commands/info/info'),
     Create = require('./commands/create/create'),
     path = require('path'),
@@ -21,8 +22,30 @@ var configFile = path.join(path.dirname(fs.realpathSync(__filename)), 'config.ym
     Config = new ConfigClass(configFile);
 
 var commands = {
+  getConfig: function() {
+    return Config;
+  },
+
   setup: function(repository, options) {
     var command = new Setup();
+
+    command.setOptions(options);
+    command.setConfig(Config);
+
+    command.exec(repository)
+        .then(function() {
+          var command = new Info(),
+              Config = new ConfigClass(configFile);
+
+          command.setConfig(Config);
+          return command.exec();
+        })
+        .then(success)
+        .catch(err);
+  },
+
+  init: function(repository, options) {
+    var command = new Init();
 
     command.setOptions(options);
     command.setConfig(Config);

@@ -17,7 +17,7 @@ var Command = require('../command'),
         return this.flow()
             .then(this.prepare.bind(this))
             .then(this.create.bind(this))
-            .then(this.clone.bind(this, repository || this.config.repository));
+            .then(this.clone.bind(this, repository || this.config.repository.setup));
       },
 
 

@@ -14,8 +14,13 @@ function setup() {
   program
       .command('setup [repository]')
       .option('-f, --force', 'Clear directory if it is not empty')
-      .description('Initialize application structure. Plugins will be generated automatically.')
+      .description('Setup enchup config and templates')
       .action(commands.setup);
+
+  program
+      .command('init [repository]')
+      .description('Initialize application')
+      .action(commands.init);
 
   program
       .command('info [component]')
@@ -33,7 +38,7 @@ function setup() {
 /**
  * Remove this arr
  */
-var available = ['setup', 'info', 'create', '-V', '--version'];
+var available = ['setup', 'info', 'create', 'init', '-V', '--version'];
 
 module.exports = {
 
