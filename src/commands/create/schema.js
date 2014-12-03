@@ -12,22 +12,32 @@ var Schema = Boop.extend({
     this.components = components;
   },
 
-  get: function(component, ex) {
+  get: function(component) {
     if (!this.components.hasOwnProperty(component)) {
       throw new Error('Component "' + component + '" does not exist');
     }
 
-    var path = this.components[component];
+    return this.components[component];
+  },
 
-    if (!Types.isString(path) && !ex) {
-      throw new Error('Component "' + component + '" is described as chain');
+  path: function(name) {
+    var component = this.get(name),
+        path = component;
+
+
+    if (Types.isObject(component)) {
+      path = component.path;
+    }
+
+    if (!path) {
+      throw new Error('Path for "' + component + '" is not described');
     }
 
     return path;
   },
 
-  compile: function(component, replacement) {
 
+  compile: function(component, replacement) {
     var resolved = this.resolve(component),
         placeholders = Placeholders.parse(resolved),
         keys = Object.keys(replacement);
@@ -50,7 +60,7 @@ var Schema = Boop.extend({
 
 
   resolve: function(component) {
-    var path = this.get(component),
+    var path = this.path(component),
         placeholders = Placeholders.dependency(path),
         parsed = path;
 

@@ -96,6 +96,13 @@ var Command = require('../command'),
 
         } else if (Types.isObject(config)) {
 
+          if (config.hasOwnProperty('path')) {
+            components[this.component] = {
+              path: this.Schema.compile(this.component, placeholders),
+              template: this.template || config.template
+            }
+          }
+
           for (var i = 0, size = config.components.length; i < size; i++) {
             var component = config.components[i].split(':'),
                 name = component[0],
@@ -118,12 +125,9 @@ var Command = require('../command'),
         var parameters = {},
             key;
 
-
         for (key in config.placeholders) {
           if (config.placeholders.hasOwnProperty(key)) {
             parameters[key] = config.placeholders[key];
-
-            //parameters[key] = parameter.replace(/\/|\\/g, '.');
           }
         }
 
@@ -174,7 +178,6 @@ var Command = require('../command'),
             if (exists(script)) {
               Component.setPostScript(script);
             }
-
 
             var template = this.Template.compile(Component, parameters),
                 ok = false;
