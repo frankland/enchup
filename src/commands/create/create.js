@@ -166,8 +166,6 @@ var Command = require('../command'),
             var local = components[name],
                 Component = new ComponentClass(name);
 
-            console.log(local.template);
-
             Component.setTemplate(local.template);
             Component.setPath(local.path);
 
