@@ -6,12 +6,16 @@ scripts: enchup/post-scripts
 app-config: enchup/enchup.yml
 user-config: enchup/user-enchup.yml
 
+# type: file | dir
+# path
+# save current copy. Only for files
 tree:
-  - [file, enchup.yml, true]
-  - [file, README.md]
-  - [dir, templates/repo]
+  - [file, enchup/enchup.yml, true]
+  - [file, enchup/README.md]
+  - [dir, enchup/templates/repo]
 
-repository: tuchk4/enchup-simple-struct
+repository:
+  setup: tuchk4/enchup-simple-struct
 
 
 
