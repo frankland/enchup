@@ -44,10 +44,11 @@ var Command = require('../command'),
             var name = this.component;
             console.log('| component: ' + Chalk.cyan(name));
 
-            var map = Placeholders.parse(component).join(':');
+            var path = Schema.resolve(this.component);
+
+            var map = Placeholders.parse(path).join(':');
             console.log('| parameters map: ' + Chalk.green(map));
 
-            var path = Schema.resolve(this.component);
             console.log('| path: ' + path);
 
           } else if (Types.isObject(component)) {
