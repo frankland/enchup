@@ -32,7 +32,7 @@ var Command = require('../command'),
       },
 
       prepare: function() {
-        this.Schema = new SchemaClass(this.config.app_config.components);
+        this.Schema = new SchemaClass(this.config.app_config.components, this.config.app_config.base);
         this.Template = new TemplateClass(this.config);
       },
 
@@ -162,7 +162,8 @@ var Command = require('../command'),
 
       create: function(config) {
         var components = config.components,
-            parameters = config.parameters;
+            parameters = config.parameters,
+            created = [];
 
 
         for (var name in components) {
@@ -198,23 +199,30 @@ var Command = require('../command'),
 
             if (ok) {
               Component.save();
-              this.log(Component);
+              created.push(Component);
             }
           }
         }
+
+        this.log(created);
       },
 
-      
-      log: function(Component) {
 
+      log: function(components) {
         var table = new Table();
-        var template = this.Template.path(Component) || 'empty';
 
-        table.push([
-          Chalk.cyan(Component.name),
-          Component.path,
-          template.replace(/([^\/]+)\.hbs/, Chalk.green('$1') + '.hbs')
-        ]);
+        for (var i = 0, size = components.length; i < size; i++) {
+          var Component = components[i];
+
+          var template = this.Template.path(Component) || 'empty';
+
+          table.push([
+            Chalk.cyan(Component.name),
+            Component.path,
+            template.replace(/([^\/]+)\.hbs/, Chalk.green('$1') + '.hbs')
+          ]);
+        }
+
 
         console.log(table.toString());
       }
