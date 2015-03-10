@@ -3,11 +3,17 @@
 
 var Placeholders = {
   parse: function(path) {
-    return path.match(/:([^\/|\\|:|\-|\.]+)/g).filter(function(value, index, self) {
-      return self.indexOf(value) === index
-    }).map(function(value) {
-      return value.slice(1);
-    });
+    var matches = path.match(/:([^\/|\\|:|\-|\.]+)/g);
+    var parsed = null;
+    if (matches) {
+      parsed =  matches.filter(function(value, index, self) {
+        return self.indexOf(value) === index
+      }).map(function(value) {
+        return value.slice(1);
+      });
+    }
+
+    return parsed;
   },
 
   map: function(placeholders, parameters) {

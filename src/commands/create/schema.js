@@ -1,6 +1,7 @@
 'use strict';
 
 var Boop = require('boop'),
+    Config = require('../../config'),
     extname = require('path').extname,
     dirname = require('path').dirname,
     normalize = require('path').normalize,
@@ -8,8 +9,9 @@ var Boop = require('boop'),
     Placeholders = require('./placeholders');
 
 var Schema = Boop.extend({
-  initialize: function(components) {
+  initialize: function(components, base) {
     this.components = components;
+    this.base = base || '';
   },
 
   get: function(component) {
@@ -60,25 +62,7 @@ var Schema = Boop.extend({
 
 
   resolve: function(component) {
-    var path = this.path(component),
-        placeholders = Placeholders.dependency(path),
-        parsed = path;
-
-    if (Types.isArray(placeholders)) {
-      if (placeholders.length === 1) {
-        var key = placeholders[0],
-            dependency = key.slice(1);
-
-        var depPathParsed = this.resolve(dependency),
-            depDirectory = this.dirname(depPathParsed);
-
-        parsed = parsed.replace(key, depDirectory);
-      } else {
-        throw new Error('Wrong path definitions. Dep path (^) could be only one');
-      }
-    }
-
-    return normalize(parsed);
+    return normalize(this.base + this.path(component));
   },
 
   dirname: function(path) {
