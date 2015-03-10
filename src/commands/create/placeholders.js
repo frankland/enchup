@@ -19,7 +19,7 @@ var Placeholders = {
     }
 
     for (var i = 0, size = keys.length; i < size; i++) {
-      map[placeholders[i]] = keys[i];
+      map[placeholders[i]] = keys[i].toLowerCase();
     }
 
     return map;
