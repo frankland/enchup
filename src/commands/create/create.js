@@ -9,6 +9,7 @@ var Command = require('../command'),
     TemplateClass = require('./templates'),
     ComponentClass = require('./component'),
     Placeholders = require('./placeholders'),
+    Table = require('cli-table'),
     Create = Command.extend({
 
       initialize: function() {
@@ -203,53 +204,19 @@ var Command = require('../command'),
         }
       },
 
-      /**
-       * TODO: REFACTOR LOGGING!!
-       */
+      
       log: function(Component) {
-        var c = Chalk.cyan,
-            y = Chalk.yellow,
-            u = Chalk.white.underline,
-            b = Chalk.blue,
-            log = console.log,
-            template = Component.template,
-            templatePath = this.Template.path(Component);
 
-        if (!template) {
-          if (!Component.source.length) {
-            template = 'empty';
-          } else {
-            template = 'default';
-          }
-        }
+        var table = new Table();
+        var template = this.Template.path(Component) || 'empty';
 
-        var l = [
-          ('Component created:' + ' ' + Component.name + ' ' + 'at path:' + ' ' + Component.path).length + 6,
-          ('Using' + ' ' + template + ' ' + 'template' + ' ' + 'at:' + ' ' + templatePath).length + 6
-        ];
+        table.push([
+          Chalk.cyan(Component.name),
+          Component.path,
+          template.replace(/([^\/]+)\.hbs/, Chalk.green('$1') + '.hbs')
+        ]);
 
-        var max = Math.max.apply(null, l);
-
-        function repeat(pattern, count) {
-          if (count < 1) return '';
-          var result = '';
-          while (count > 1) {
-            if (count & 1) result += pattern;
-            count >>= 1, pattern += pattern;
-          }
-          return result + pattern;
-        }
-
-        log(b('   +') + b(repeat('-', max)) + b('+'));
-        log(b('   |   ') + c('Component created:') + ' ' + u(Component.name) + ' ' + c('at path:') + ' ' + u(Component.path) + repeat(' ', max - l[0]) + b('   |'));
-
-        if (!!templatePath) {
-          log(y('   |   ') + c('Using') + ' ' + u(template) + ' ' + c('template') + ' ' + c('at:') + ' ' + u(templatePath) + repeat(' ', max - l[1]) + y('   |'));
-        } else {
-          log(y('   |   ') + c('Created without template because template was not found') + repeat(' ', max - 'Created without template because template was not found'.length) + y('   |'));
-        }
-
-        log(y('   +') + y(repeat('-', max)) + y('+'));
+        console.log(table.toString());
       }
     });
 
