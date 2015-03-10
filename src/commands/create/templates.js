@@ -4,8 +4,8 @@ var Boop = require('boop'),
     join = require('path').join,
     read = require('fs').readFileSync,
     exists = require('fs').existsSync,
-    extname = require('path').extname;
-
+    extname = require('path').extname,
+    Handlebars = require('../../utils/handlebars');
 
 var Templates = Boop.extend({
   initialize: function(config) {
@@ -15,24 +15,17 @@ var Templates = Boop.extend({
   compile: function(Component, parameters) {
 
     var template = this.get(Component);
+    var compile = Handlebars.compile(template);
 
-    for (var param in parameters) {
-      if (parameters.hasOwnProperty(param)) {
-        var value = parameters[param].replace(/\//g, '.'),
-            expr = new RegExp('{{\\s*' + param + '\\s*}}', 'g');
-
-        template = template.replace(expr, value);
-      }
-    }
-
-    return template;
+    return compile(parameters);
   },
 
   path: function(Component) {
     var template = Component.template || 'default',
         dir = this.config.template_dir;
 
-    template += extname(Component.path);
+    //template += extname(Component.path);
+    template += '.hbs';
 
 
     var appTemplate = join(dir, 'app', Component.name, template),
