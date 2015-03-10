@@ -9,7 +9,7 @@ var Boop = require('boop'),
     normalize = require('path').normalize,
     join = require('path').join,
     fs = require('fs'),
-    vm = require('vm'),
+    //vm = require('vm'),
     rimraf = require('rimraf');
 
 var Component = Boop.extend({
@@ -51,20 +51,20 @@ var Component = Boop.extend({
      */
     write(path, this.source);
 
-    if (this.script) {
-
-      /**
-       * TODO: create correct context
-       */
-      var context = vm.createContext({
-        Component: this,
-        fs: fs,
-        console: console
-      });
-
-      var bin = read(this.script);
-      vm.runInContext(bin, context);
-    }
+    //if (this.script) {
+    //
+    //  /**
+    //   * TODO: create correct context
+    //   */
+    //  var context = vm.createContext({
+    //    Component: this,
+    //    fs: fs,
+    //    console: console
+    //  });
+    //
+    //  var bin = read(this.script);
+    //  vm.runInContext(bin, context);
+    //}
   },
 
   exists: function() {
