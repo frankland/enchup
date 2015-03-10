@@ -3,8 +3,9 @@ temp: enchup/tmp
 template_dir: enchup/templates
 scripts: enchup/post-scripts
 
-app-config: enchup/enchup.yml
-user-config: enchup/user-enchup.yml
+configs:
+  app: enchup/enchup.yml
+  user: enchup/user-enchup.yml
 
 # type: file | dir
 # path

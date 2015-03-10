@@ -20,7 +20,7 @@ var Config = Boop.extend({
   },
 
   loadAppConfig: function() {
-    var file = this['app-config'];
+    var file = this.configs.app;
 
     if (exists(file)) {
       this.app_config = {};
@@ -35,7 +35,7 @@ var Config = Boop.extend({
   },
 
   loadUserConfig: function() {
-    var file = this['user-config'];
+    var file = this.configs.user;
 
     if (exists(file)) {
       this.user_config = {};
