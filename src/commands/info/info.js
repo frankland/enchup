@@ -1,5 +1,6 @@
 'use strict';
 
+
 var Command = require('../command'),
     path = require('path'),
     prettyjson = require('prettyjson'),
@@ -8,6 +9,7 @@ var Command = require('../command'),
     Table = require('cli-table'),
     Placeholders = require('../create/placeholders'),
     SchemaClass = require('../create/schema'),
+    RandomWords = require('../../utils/random-words'),
     Info = Command.extend({
 
       initialize: function() {
@@ -23,11 +25,61 @@ var Command = require('../command'),
         return this.flow()
             .then(this.validate.bind(this))
             .then(this.info.bind(this))
-            .then(this.detailed.bind(this));
+            .then(this.detailed.bind(this))
+            .then(this.example.bind(this));
       },
 
       highlite: function(path) {
         return path.replace(/(:[^-|\/|\.]+)/g, Chalk.green('$1'));
+      },
+
+      example: function() {
+
+        if (this.component) {
+          var name = this.component;
+          var parameters = null;
+
+          var Schema = new SchemaClass(this.config.app_config.components, this.config.app_config.base);
+          var component = Schema.get(this.component);
+
+          if (Types.isString(component)) {
+
+            var path = Schema.resolve(this.component);
+            parameters = Placeholders.parse(path);
+          } else if (Types.isObject(component)) {
+
+            if (component.map) {
+              parameters = component.map.split(':');
+            }
+          }
+
+          var example = 'enchup create ';
+
+          example += name + ' ';
+
+          var parametersLength = parameters.length;
+          var exampleParameters = [];
+          var associative = {};
+
+          var Words = new RandomWords();
+          for (var i = 0; i < parametersLength; i++) {
+            var key = Words.next();
+
+            exampleParameters.push(key);
+            associative[parameters[i]] = key;
+          }
+
+          example += exampleParameters.join(':');
+
+          console.log('');
+          console.log('Example for creating "' + name +'" component:');
+          console.log('');
+          console.log('$ > ' + Chalk.blue(example));
+          console.log('');
+          console.log('In this case parameters mapping will be:');
+          console.log('');
+          console.log(prettyjson.render(associative));
+        }
       },
 
       detailed: function() {
@@ -41,8 +93,7 @@ var Command = require('../command'),
           var dependencies = [];
 
           if (Types.isString(component)) {
-            var name = this.component;
-            data.push({component: Chalk.cyan(name)});
+            data.push({component: Chalk.cyan(this.component)});
 
             var path = Schema.resolve(this.component);
             var map = Placeholders.parse(path);
@@ -53,8 +104,7 @@ var Command = require('../command'),
 
             data.push({path: this.highlite(path)});
           } else if (Types.isObject(component)) {
-
-            data.push({component: this.component});
+            data.push({component: Chalk.cyan(this.component)});
 
             if (component.map) {
               data.push({parameters: component.map});
@@ -126,7 +176,7 @@ var Command = require('../command'),
           if (dependencies.length) {
             var depsTable = new Table(innerTableChars);
             depsTable.push.apply(depsTable, dependencies);
-            data.push({'component list': depsTable.toString()});
+            data.push({'components': depsTable.toString()});
           }
 
           var table = new Table();
@@ -135,11 +185,10 @@ var Command = require('../command'),
           console.log('');
           console.log('');
 
-          if (!data.hasOwnProperty('map') && !data.hasOwnProperty('provide')) {
+          if (!data.hasOwnProperty('map') && !data.hasOwnProperty('components')) {
             console.log(Chalk.red('Warning: @map or @provide should be described. ' +
             'Otherwise - enchup will not be able to compile component paths and template'));
           }
-
 
           console.log(table.toString());
         }

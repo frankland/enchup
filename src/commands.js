@@ -15,6 +15,8 @@ function err(e) {
 }
 
 function success() {
+  console.log('');
+  console.log('');
   console.log(chalk.green('Done'));
 }
 
