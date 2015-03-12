@@ -19,19 +19,20 @@ function setup() {
 
   program
       .command('init [repository]')
-      .description('Initialize application')
+      .description('Initialize application. Similar to `git clone [repository]` but remove .git  after cloning')
       .action(commands.init);
 
   program
       .command('info [component]')
-      .description('Show enchup info accroding to current structure')
+      .description('Show all available components or information about certain component: ' +
+        'path, parameters map and components list')
       .action(commands.info);
 
   program
       .command('create <component> <parameters> [template]')
       .option('-f, --force', 'cverride if already exists')
-      .option('-c, --continue', 'do not ovveride existing components if multiple')
-      .description('Create components according to structure. <parameters> - :component..:component')
+      .option('-c, --continue', 'do not ovveride existing components')
+      .description('Create components according to enchup config')
       .action(commands.create);
 }
 
