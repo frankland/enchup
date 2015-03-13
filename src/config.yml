@@ -16,7 +16,7 @@ tree:
   - [dir, enchup/templates/repo]
 
 repository:
-  setup: tuchk4/enchup-simple-struct
+  setup: frankland/enchup-js-struct
 
 
 
