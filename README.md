@@ -319,4 +319,5 @@ Controller('user.profile')
 ## 8. Yo
 You are welcome for contributing and bug reporting :) Help to make enchup better <3
 Also you are welcome to any questions and discussing at glitter chat.
+
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/frankland/enchup?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
