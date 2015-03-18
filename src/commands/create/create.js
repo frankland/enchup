@@ -104,14 +104,16 @@ var Command = require('../command'),
             }
           }
 
-          for (var i = 0, size = config.components.length; i < size; i++) {
-            var component = config.components[i].split(':'),
-                name = component[0],
-                template = component[1];
+          if (config.hasOwnProperty('components')) {
+            for (var i = 0, size = config.components.length; i < size; i++) {
+              var component = config.components[i].split(':'),
+                  name = component[0],
+                  template = component[1];
 
-            components[name] = {
-              path: this.Schema.compile(name, placeholders),
-              template: template
+              components[name] = {
+                path: this.Schema.compile(name, placeholders),
+                template: template
+              }
             }
           }
         }
@@ -164,7 +166,6 @@ var Command = require('../command'),
         var components = config.components,
             parameters = config.parameters,
             created = [];
-
 
         for (var name in components) {
           if (components.hasOwnProperty(name)) {
