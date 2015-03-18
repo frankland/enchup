@@ -30,8 +30,8 @@ function setup() {
 
   program
       .command('create <component> <parameters> [template]')
-      .option('-f, --force', 'cverride if already exists')
-      .option('-c, --continue', 'do not ovveride existing components')
+      .option('-f, --force', 'override components if already exists')
+      .option('-c, --continue', 'do not override existing components')
       .description('Create components according to enchup config and templates')
       .action(commands.create);
 }
