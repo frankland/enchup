@@ -17,6 +17,7 @@ tree:
 
 repository:
   setup: frankland/enchup-js-struct
+  init: frankland/valent-boilerplate
 
 
 
