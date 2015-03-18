@@ -147,34 +147,37 @@ var Command = require('../command'),
 
 
           var innerTableChars = {
-            chars: {
-              'top': '' ,
-              'top-mid': '' ,
-              'top-left': '' ,
-              'top-right': '',
-              'bottom': '' ,
-              'bottom-mid': '' ,
-              'bottom-left': '' ,
-              'bottom-right': '',
-              'left': '' ,
-              'left-mid': '' ,
-              'mid': '─' ,
-              'mid-mid': '',
-              'right': '' ,
-              'right-mid': '' ,
-              'middle': '│'
-            }
+            'top': '' ,
+            'top-mid': '' ,
+            'top-left': '' ,
+            'top-right': '',
+            'bottom': '' ,
+            'bottom-mid': '' ,
+            'bottom-left': '' ,
+            'bottom-right': '',
+            'left': '' ,
+            'left-mid': '' ,
+            'mid': '─' ,
+            'mid-mid': '',
+            'right': '' ,
+            'right-mid': '' ,
+            'middle': '│'
           };
 
 
           if (provide.length) {
-            var provideTable = new Table(innerTableChars);
+            var provideTable = new Table({
+              chars: innerTableChars
+            });
             provideTable.push.apply(provideTable, provide);
             data.push({provide: provideTable.toString()});
           }
 
           if (dependencies.length) {
-            var depsTable = new Table(innerTableChars);
+            var depsTable = new Table({
+              head: ['Component', 'Path', 'Template'],
+              chars: innerTableChars
+            });
             depsTable.push.apply(depsTable, dependencies);
             data.push({'components': depsTable.toString()});
           }
@@ -185,10 +188,10 @@ var Command = require('../command'),
           console.log('');
           console.log('');
 
-          if (!data.hasOwnProperty('map') && !data.hasOwnProperty('components')) {
-            console.log(Chalk.red('Warning: @map or @provide should be described. ' +
-            'Otherwise - enchup will not be able to compile component paths and template'));
-          }
+          //if (!data.hasOwnProperty('path') && (!data.hasOwnProperty('parameters') || !data.hasOwnProperty('provide'))) {
+          //  console.log(Chalk.red('Warning: @path and @parameters or @provide options should be described. ' +
+          //  'Otherwise - enchup will not be able to compile component paths and template.'));
+          //}
 
           console.log(table.toString());
         }
@@ -200,12 +203,8 @@ var Command = require('../command'),
         var user = this.config.user_config || {};
 
         var infoBlock = {
-          author: {
-            app: app.author,
-            user: user.author
-          },
-          application: app.application,
-          version: app.version
+          parameters: app.parameters || {},
+          user: user
         };
 
         console.log(prettyjson.render(infoBlock));
