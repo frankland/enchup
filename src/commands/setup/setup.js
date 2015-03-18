@@ -118,7 +118,7 @@ var Command = require('../command'),
           if (this.isForce()) {
             this.clean();
           } else {
-            throw new Error('Dir exists. No -f');
+            throw new Error('enchup directory already exists. If you want to override - use "-f --force" flag');
           }
         }
       }
