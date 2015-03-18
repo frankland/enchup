@@ -86,6 +86,11 @@ Create components according to enchup config and templates. All components are d
 create <component> <parameters> [template]
 ```
 
+Flags:
+
+ - -f --force - override components if already exists
+ - -c --continue - do not override existing components. Important for components that includes other components
+
 For additional information about component use `enchup info [component]`
 
 ## 3. Enchup file system
