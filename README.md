@@ -175,37 +175,37 @@ Run `enchup info [component]` to get detailed info about how to create component
 ```
 enchup create controller user:profile
 ```
-Will create script `/**user**/controllers/**profile**.js` with controller's default template `/enchup/templates/**app**/controller/default.js` or if not exist
-will check `/enchup/templates/**repo**/controller/default.js`.
+Will create script /**user**/controllers/**profile**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
+will check /enchup/templates/**repo**/controller/default.js.
 
 <p align="center">
-    <img src="http://habrastorage.org/files/93a/8a1/935/93a8a1935c6843b99d7dc628a8790b95.png" alt="enchup info controller"/>
+  <img src="http://habrastorage.org/files/93a/8a1/935/93a8a1935c6843b99d7dc628a8790b95.png" alt="enchup info controller"/>
 </p>
 
 ```
 enchup create screen user:profile:/profile.html
 ```
 Will create scripts:
- - `/**user**/controllers/**profile**.js` with controller's default template `/enchup/templates/**app**/controller/default.js` or if not exist
+ - /**user**/controllers/**profile**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
 will check `/enchup/templates/**repo**/controller/default.js`.
- - `/**user**/templates/**profile**.html` with default view's default template `/enchup/templates/**app**/view/default.html` or if not exist
+ - /**user**/templates/**profile**.html with default view's default template /enchup/templates/**app**/view/default.html or if not exist
  will check `/enchup/templates/**repo**/view/default.html`.
 
 <p align="center">
-    <img src="http://habrastorage.org/files/10b/bd5/ae0/10bbd5ae0e6741dfad1a31f35846c438.png "enchup info screen" alt="enchup info screen"/>
+  <img src="http://habrastorage.org/files/10b/bd5/ae0/10bbd5ae0e6741dfad1a31f35846c438.png" alt="enchup info screen"/>
 </p>
 
 ```
 enchup create landing frankland:/frankland.html
 ```
 Will create scripts:
- - `/**frankland**/controllers/**frankland**.js` with controller's default template `/enchup/templates/**app**/controller/default.js` or if not exist
+ - /**frankland**/controllers/**frankland**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
 will check `/enchup/templates/**repo**/controller/default.js`.
- - `/**frankland**/view/**frankland**.html` with template **landing** `/enchup/templates/**app**/view/landing.html` or if not exist
- will check `/enchup/templates/**repo**/view/landing.html`.
+ - /**frankland**/view/**frankland**.html with template **landing** /enchup/templates/**app**/view/landing.html or if not exist
+ will check /enchup/templates/**repo**/view/landing.html.
 
 <p align="center">
-    <img src="http://habrastorage.org/files/7cc/32b/9b4/7cc32b9b4dc24eacb9494992edba0108.png" alt="enchup info landing"/>
+  <img src="http://habrastorage.org/files/7cc/32b/9b4/7cc32b9b4dc24eacb9494992edba0108.png" alt="enchup info landing"/>
 </p>
 
 ## 5. Custom config: user-enchup.yml
