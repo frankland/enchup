@@ -1,156 +1,98 @@
-04.12.14 README file will be amended and supplemented in few days.
-
 # Enchup
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/frankland/enchup?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
+- [Enchup](#enchup)
+- [1. Overview](#1-overview)
+- [2. Commands](#2-commands)
+- [2.1 Setup](#21-setup)
+- [2.2 Init](#22-init)
+- [2.3 Info](#23-info)
+- [2.4 Create](#24-create)
+- [3. Enchup file system](#3-enchup-file-system)
+- [4. Enchup config: enchup.yml](#4-enchup-config-enchupyml)
+- [4.1 Config overview](#41-config-overview)
+- [4.2 Parameters](#42-parameters)
+- [4.3 Base](#-43-base)
+- [4.4 Components](#44-components)
+- [5. Custom config: user-enchup.yml](#5-custom-config-user-enchupyml)
+- [6. Templates](#6-templates)
+- [6.1 Overview](#61-overview)
+- [6.2 Example](#62-example)
+- [7. Future plans](#7-future-plans)
+- [8. Yo](#8-yo)
+
+
 ## 1. Overview
-
-Easy way to setup application and scripts files according to templates.
-
+Easy way to setup application and provide commands to create scripts (components) according to templates and config.
 ```
 npm install -g enchup
 ```
 
 Available commands:
 
+ - setup [options] [repository]
  - init [repository]
- - setup [repository]
  - info [component]
- - create <component> <parameters> [template]
+ - create [options] <component> <parameters> [template]
 
 
-## 2. Init
+## 2. Commands
+### 2.1 Setup
+Setup enchup config and templates form repository. If repository is not set - default is using.
+Default repository [frankland/enchup-js-app](http://github.com/frankland/enchup-js-app)
+```
+enchup setup
+```
 
-Using default repository (for init default repo is not set).
+Or using custom repository. There are only github repositories. Using format - %username%/%reponame%
+```
+enchup setup frankland/enchup-angular-app
+```
 
+Flags:
+
+ - -f --force - clean and backup configs and remove templates before setup if they already exists
+
+
+Could be used at already existing application.
+
+### 2.2 Init
+Initialize application to current directory. Similar to `git clone [repository]` but remove .git  after cloning.
+Directory should be empty.
+If repository is not set - default is using.
+Default repository [frankland/valent-boilerplate](http://github.com/frankland/valent-boilerplate)
 ```
 enchup init
 ```
-Or from gh repository (gh username/repository)
+
+Or using custom repository. There are only github repositories. Using format - %username%/%reponame%
 ```
 enchup init [repository]
 ```
 
-
-Initailze application. Current dir should be empty.
-
-
-## 3. Setup
-
-```
-enchup setup
-```
-Or from gh repository (gh username/repository)
-```
-enchup setup [repository]
-```
-
-
-Important:
-Default repository not looks good right now and it will be updated asap.
-
-
-Setup enchup config and script's templates. Could be used at already existing application. If enchup has been already setuped - enchup will ask to add force (-f) flag. Old configs will be backuped and templates will not be overriden but if there are new templates in repository - they will be downloaded.
-
-
-## 4. Info
-
+### 2.3 Info
+Show all available components or information about certain component: path, parameters map and components list.
 ```
 enchup info
-```
-
-Show info about current enchup config.
-
-```
 enchup info [component]
 ```
-Show info about component:
-
-  - component's path
-  - component's placeholder map
-  - provided placeholders
-  - dependencies
 
 
-## 5. Create
 
+### 2.4 Create
+Create components according to enchup config and templates. All components are described at enchup.yml.
 ```
 create <component> <parameters> [template]
 ```
 
-Create component according to parameters and templates.
-For exaple in enchup config:
+For additional information about component use `enchup info [component]`
 
-```yml
-controller: /app/:screen/controllers/:controller/:controller.js
-
-template:
-  map: module:controller
-  paths: /app/:screen/controllers/:controller/:controller.html
-
-screen:
-  map: screen:ontroller
-  components:
-    - controller
-    - template
-```
-
-Here is 3 components - `controller`, `template` and `screen`.
-To get additional info in console: `enchup info screen`
-
-```
-ecnhup create controller users:profile
-```
-Will resolve controller paths as `/app/users/controllers/profile/profile.js` and create with default template.
-
-```
-ecnhup create controller users:profile admin
-```
-Will resolve controller paths as `/app/users/controllers/profile/profile.js` and create with **admin** template.
-
-```
-ecnhup create screen users:profile
-```
-Will resolve controller and template components.
-
-
-
-## 6. Component config
-
-Available options:
-
-```yml
-
-app: /src/application
-
-controller:
-  map: screen:name
-  path: ^app/:screen/:module/:controller/:name.js # will resolve path according to `app` component
-                                                  # if `app` in not a directory - will be used its dirname
-  template: admin # set template for component. But if you set template at console command - it will be used
-  provide:
-    module: users # will create `controller` placeholder with `users`
-    controller: :name # will create `controller` placeholder with same value as placeholder `foo`
-  components:
-    - template:admin # tempalte components will be created with `admin` template
-    
-partial:
-  map: screen:module:controller
-  path: ^controller/partial.html # will be resolved as /src/application/:screen/:module/:controller/partial.html
-```
-
-Simple configuration:
-
-```yml
-controller: /application/:module/:controller/:bar/:baz.js
-```
-Placeholders will be calculated automatically
-
-
-## 7. File system
+## 3. Enchup file system
 
      |-enchup/
         |-enchup.yml
-        |-user-enchup.yml   
+        |-user-enchup.yml
         |
         |-templates/
                    |-repo/
@@ -159,54 +101,222 @@ Placeholders will be calculated automatically
                    |     |           |-admin.js
                    |     |-template/
                    |               |-default.html
-                   |     
+                   |
                    |-app/
-                         |-controller/
-                         |           |-default.js
-                         |-template/
-                                   |-default.html
+                        |-controller/
+                        |           |-default.js
+                        |-template/
+                                  |-default.html
 
 
  - enchup/enchup.yml - main config
  - enchup/user-enchup.yml - user enchup config. Should be ignored by cvs
- - enchup/tempaltes/repo - templates that donwloaded from repository.  Will not be overriden if you user `enchup setup` on existing application
- - enchup/templates/app -application templates. Will **not** be overriden if you user `enchup setup` on existing application
+ - enchup/tempaltes/repo - templates that donwloaded from repository.  Will be overriden if you use `enchup setup` on existing application
+ - enchup/templates/app - application templates. Will **not** be overriden if you user `enchup setup` on existing application
 
 
-## 8. Templates
+## 4. Enchup config: enchup.yml
+## 4.1 Config overview
+There are three main blocks at enchup.yml:
 
-Enchup trying to find tempalate in `/enchup/templates/app/<component>/<template>` and if there is no - it try to find and repo templates - `/enchup/templates/repo/<component>/<template>`
+ - parameters
+ - base
+ - components
 
-enchup/templates/repo/controller/default.js
 
-```js
+## 4.2 Parameters
+Any data that will be available for template rendering.
+
+## 4.3 Base
+Base path for all components
+
+## 4.4 Components
+
+Array of components that could be created by enchup.
+
+For example:
+
+```yml
+
+base: /src/js
+components:
+  controller: /:screen/controllers/:controller.js
+  view: /:screen/view/:view.html
+
+  screen:
+    map: screen:controller:route
+    components:
+      - controller
+      - view
+
+  landing:
+    map: screen:controller:route
+    provide:
+        controller: :screen
+    components:
+      - controller
+      - template:landing
+```
+
+Components could be described as string or object.
+At example above:
+ - controller - described as string where all parameters are in path
+ - screen - described as object.
+
+Options for definition as object are:
+
+ - map - parameters that should be described when run `enchup create` command
+ - path - component path
+ - components - list of the components and its template that also will be created
+ - provide - additional parameters list. Could be added as constants or links for specified parameters
+
+Run `enchup info [component]` to get detailed info about how to create component.
+
+```
+enchup create controller user:profile
+```
+Will create script `/**user**/controllers/**profile**.js` with controller's default template `/enchup/templates/**app**/controller/default.js` or if not exist
+will check `/enchup/templates/**repo**/controller/default.js`.
+
+<p align="center">
+    <img src="http://habrastorage.org/files/93a/8a1/935/93a8a1935c6843b99d7dc628a8790b95.png" alt="enchup info controller"/>
+</p>
+
+```
+enchup create screen user:profile:/profile.html
+```
+Will create scripts:
+ - `/**user**/controllers/**profile**.js` with controller's default template `/enchup/templates/**app**/controller/default.js` or if not exist
+will check `/enchup/templates/**repo**/controller/default.js`.
+ - `/**user**/templates/**profile**.html` with default view's default template `/enchup/templates/**app**/view/default.html` or if not exist
+ will check `/enchup/templates/**repo**/view/default.html`.
+
+<p align="center">
+    <img src="http://habrastorage.org/files/10b/bd5/ae0/10bbd5ae0e6741dfad1a31f35846c438.png "enchup info screen" alt="enchup info screen"/>
+</p>
+
+```
+enchup create landing frankland:/frankland.html
+```
+Will create scripts:
+ - `/**frankland**/controllers/**frankland**.js` with controller's default template `/enchup/templates/**app**/controller/default.js` or if not exist
+will check `/enchup/templates/**repo**/controller/default.js`.
+ - `/**frankland**/view/**frankland**.html` with template **landing** `/enchup/templates/**app**/view/landing.html` or if not exist
+ will check `/enchup/templates/**repo**/view/landing.html`.
+
+<p align="center">
+    <img src="http://habrastorage.org/files/7cc/32b/9b4/7cc32b9b4dc24eacb9494992edba0108.png" alt="enchup info landing"/>
+</p>
+
+## 5. Custom config: user-enchup.yml
+
+This is just user's enchup config that should be ignored by vcs. Need for developers's paramaters such as: {{ name }},  {{ email }},
+{{ homepage }} etc.
+
+
+## 6. Templates
+### 6.1 Overview
+Enchup is trying to find tempalate at `/enchup/templates/app/<component>/<template>` but if there is no - it check repo directory - `/enchup/templates/repo/<component>/<template>`
+
+[Handlebars]([https://github.com/wycats/handlebars.js/) is using for template rendering. There are available few helpers:
+
+ - ucfirst - lowercase expression's value and uppercase first word
+ - uppercase - uppercase expression's value
+ - lowercase - lowercase expression's value
+ - tail - split expression's value by '/' symbol and use last one.
+ For example:
+ You have component `controller` that is described as `controller: /app/controllers/:screen/:controller` and you use command
+ `enchup create controller user:profile/friends`
+ In this case template **"{{ tail controller }}"** will be rendered as "friends"
+ and **"{{ ucfirst (tail controller }})"** will be rendered as "Friends"
+
+All components parameters are available at template. And there is one always existing parameter - {{ date }}.
+
+Also there are `parameters` object form `enchup.yml` and all from `user-enchup.yml` available at templates.
+
+### 6.2 Example
+
+According to this config:
+```yml
+components:
+  controller: /:screen/controllers/:controller.js
+```
+and this template:
+
+```handlebars
 /**
-* @date {{ date }}
-* @version {{ version }}
-* @application {{ application }}
-* @author {{ author }}
-*/
-import { Controller } from 'ngx';
+ * @date {{ date }}
+ * @author {{ author }}
+ * @version {{ version }}
+ * @application {{ application }}
+ */
+import BaseController from 'valent/base/controller';
+import { Controller } from 'valent';
+import {{ ucfirst (tail controller) }}Template from './{{ tail controller }}.html';
 
-class Scope {
-  constructor(){
-    
+class {{ ucfirst (tail controller) }}Controller extends BaseController  {
+  constructor(Scope) {
+    super(Scope);
+  }
+
+  getName() {
+    return '{{ screen }}.{{ controller }}';
   }
 }
 
 
-
 Controller('{{ screen }}.{{ controller }}')
-.route('/')
-.src(new Scope());
-```  
+  .route('{{ screen }}/{{ tail controller }}.html')
+  .template({{ ucfirst (tail controller) }}Template)
+  .src({{ ucfirst (tail controller) }}Controller);
+```
 
-Placeholders also could be used in templates. They should be wrapped with {{ }}.
-Also `paramters` object form `enchup.yml` and all from `user-enchup.yml` will be available as placeholders in templtes.
+and this command:
+```
+enchup create controller user:profile
+```
 
-## 9. user-enchup.yml
+Enchup will create this script:
 
-This is just user's enchup config that should be igored by vcs. Need for user's paramaters such as: @name, @email, @homepage etc.
-                                    
-                                    
-                                    
+```js
+/**
+ * @date 2015-03-18 11:45:10
+ * @author tuchk4
+ * @version
+ * @application
+ */
+import BaseController from 'valent/base/controller';
+import { Controller } from 'valent';
+import ProfileTemplate from './profile.html';
+
+class ProfileController extends BaseController  {
+  constructor(Scope) {
+    super(Scope);
+  }
+
+  getName() {
+    return 'user.profile';
+  }
+}
+
+
+Controller('user.profile')
+  .route('/user/profile.html')
+  .template(Template)
+  .src(ProfileController);
+```
+
+
+## 7. Future plans
+
+- rewrite code on ES6
+- add `-d --dry-run` option
+- think again about enchup functions: remove unneeded and add more useful
+- bug fixing
+
+## 8. Yo
+
+Yo
+
+You are welcome for contributing and bug reporting :) Help to make enchup better <3
+Also you are welcome to any questions and discussing at glitter chat.
