@@ -304,7 +304,7 @@ class ProfileController extends BaseController  {
 
 Controller('user.profile')
   .route('/user/profile.html')
-  .template(Template)
+  .template(ProfileTemplate)
   .src(ProfileController);
 ```
 
