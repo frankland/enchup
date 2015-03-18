@@ -205,8 +205,8 @@ enchup create landing frankland:/frankland.html
 Will create scripts:
  - /**frankland**/controllers/**frankland**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
 will check `/enchup/templates/**repo**/controller/default.js`.
- - /**frankland**/view/**frankland**.html with template **landing** /enchup/templates/**app**/view/landing.html or if not exist
- will check /enchup/templates/**repo**/view/landing.html.
+ - /**frankland**/view/**frankland**.html with template **landing** /enchup/templates/**app**/view/**landing**.html or if not exist
+ will check /enchup/templates/**repo**/view/**landing**.html.
 
 <p align="center">
   <img src="http://habrastorage.org/files/7cc/32b/9b4/7cc32b9b4dc24eacb9494992edba0108.png" alt="enchup info landing"/>
