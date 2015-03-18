@@ -136,7 +136,6 @@ Any data that will be available for template rendering.
 Base path for all components
 
 ## 4.4 Components
-
 Array of components that could be created by enchup.
 
 For example:
@@ -214,7 +213,6 @@ will check `/enchup/templates/**repo**/controller/default.js`.
 </p>
 
 ## 5. Custom config: user-enchup.yml
-
 This is just user's enchup config that should be ignored by vcs. Need for developers's paramaters such as: {{ name }},  {{ email }},
 {{ homepage }} etc.
 
@@ -240,7 +238,6 @@ All components parameters are available at template. And there is one always exi
 Also there are `parameters` object form `enchup.yml` and all from `user-enchup.yml` available at templates.
 
 ### 6.2 Example
-
 According to this config:
 ```yml
 components:
@@ -320,8 +317,6 @@ Controller('user.profile')
 - bug fixing
 
 ## 8. Yo
-
-Yo
-
 You are welcome for contributing and bug reporting :) Help to make enchup better <3
 Also you are welcome to any questions and discussing at glitter chat.
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/frankland/enchup?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
