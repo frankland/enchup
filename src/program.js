@@ -32,7 +32,7 @@ function setup() {
       .command('create <component> <parameters> [template]')
       .option('-f, --force', 'cverride if already exists')
       .option('-c, --continue', 'do not ovveride existing components')
-      .description('Create components according to enchup config')
+      .description('Create components according to enchup config and templates')
       .action(commands.create);
 }
 
