@@ -19,8 +19,9 @@
 - [6. Templates](#6-templates)
 - [6.1 Overview](#61-overview)
 - [6.2 Example](#62-example)
-- [7. Future plans](#7-future-plans)
-- [8. Yo](#8-yo)
+- [7. Api](#7-api)
+- [8. Future plans](#7-future-plans)
+- [9. Yo](#8-yo)
 
 
 ## 1. Overview
@@ -308,15 +309,28 @@ Controller('user.profile')
   .src(ProfileController);
 ```
 
+## 7. API
 
-## 7. Future plans
+All commands available from api.
+
+```js
+var Enchup = require('enchup')
+
+Enchup.setup(repository, option);
+Enchup.init(repository, options);
+Enchup.info(component);
+Enchup.create(component, parameters, template, options);
+```
+
+
+## 8. Future plans
 
 - rewrite code on ES6
 - add `-d --dry-run` option
 - think again about enchup functions: remove unneeded and add more useful
 - bug fixing
 
-## 8. Yo
+## 9. Yo
 You are welcome for contributing and bug reporting :) Help to make enchup better <3
 Also you are welcome to any questions and discussing at glitter chat.
 
