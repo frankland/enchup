@@ -1,25 +1,50 @@
 var Handlebars = require('handlebars');
 
-Handlebars.registerHelper('ucfirst', function(str) {
-  var first = str.charAt(0).toUpperCase();
-  return first + str.toLowerCase().substr(1, str.length-1);
-});
+/**
+ * NOTE: now if empty placholder - just replace with empty string. Dont check it
+ */
+function check(str, helper) {
+  if (undefined === str) {
+    throw new Error('Empty value for "' + helper + '"');
+  }
+}
 
-Handlebars.registerHelper('uppercase', function(str) {
-  return str.toUpperCase();
-});
+function ucfirst(str) {
+  var input = (str || '');
 
-Handlebars.registerHelper('lowercase', function(str) {
-  return str.toLowerCase();
-});
+  var first = input.charAt(0).toUpperCase();
+  return first + input.toLowerCase().substr(1, input.length-1);
+}
 
-Handlebars.registerHelper('tail', function(str) {
-  return str.split('/').pop()
-});
+function uppercase(str) {
+  return (str || '').toUpperCase();
+}
 
-Handlebars.registerHelper('dots', function(str) {
-  return str.toLowerCase().replace(/\//g, '.');
-});
+function lowercase(str) {
+  return (str || '').toLowerCase();
+}
+
+function tail(str) {
+  return (str || '').split('/').pop()
+}
+
+function dots(str) {
+  return (str || '').toLowerCase().replace(/\//g, '.');
+}
+
+function normalize(str) {
+  return ucfirst(str || '').replace(/-(.)/g, function(match, point) {
+    return point.toUpperCase();
+  });
+}
+
+
+Handlebars.registerHelper('ucfirst', ucfirst);
+Handlebars.registerHelper('uppercase', uppercase);
+Handlebars.registerHelper('lowercase', lowercase);
+Handlebars.registerHelper('tail', tail);
+Handlebars.registerHelper('dots', dots);
+Handlebars.registerHelper('normalize', normalize);
 
 
 module.exports =  Handlebars;
