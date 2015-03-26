@@ -227,7 +227,9 @@ Enchup is trying to find tempalate at `/enchup/templates/app/<component>/<templa
  - ucfirst - lowercase expression's value and uppercase first word
  - uppercase - uppercase expression's value
  - lowercase - lowercase expression's value
- - tail - split expression's value by '/' symbol and use last one.
+ - tail - split expression's value by '/' symbol and use last one
+ - dots - lowercase and replace '/' by '.'
+ 
  For example:
  You have component `controller` that is described as `controller: /app/controllers/:screen/:controller` and you use command
  `enchup create controller user:profile/friends`

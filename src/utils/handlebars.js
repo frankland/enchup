@@ -17,5 +17,9 @@ Handlebars.registerHelper('tail', function(str) {
   return str.split('/').pop()
 });
 
+Handlebars.registerHelper('dots', function(str) {
+  return str.toLowerCase().replace(/\//g, '.');
+});
+
 
 module.exports =  Handlebars;
