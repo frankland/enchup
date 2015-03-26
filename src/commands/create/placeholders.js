@@ -16,6 +16,20 @@ var Placeholders = {
     return parsed;
   },
 
+  isValid: function(parameters) {
+    var isValid = true;
+    var keys = parameters.split(':');
+
+    for (var i = 0, size = keys.length; i < size; i++) {
+      if (!!keys[i].length) {
+        isValid = false;
+        break;
+      }
+    }
+
+    return isValid;
+  },
+
   map: function(placeholders, parameters) {
     var keys = parameters.split(':'),
         map = {};
