@@ -69,6 +69,10 @@ var Command = require('../command'),
           }
         }
 
+        if (Placeholders.isValid(this.parameters)) {
+          throw new Error('Parameters is not valid');
+        }
+
         var placeholders = Placeholders.map(map, this.parameters);
 
         for (var item in provide) {
