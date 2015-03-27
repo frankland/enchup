@@ -2,7 +2,7 @@
   "author": "tuchk4",
   "name": "enchup",
   "description": "Provide commands to create scripts (components) according to templates and config",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "repository": {
     "url": "https://github.com/tuchk4/enchup.git"
   },
