@@ -10,14 +10,14 @@ configs:
 # type: file | dir
 # path
 # save current copy. Only for files
-tree:
-  - [file, enchup/enchup.yml, true]
-  - [file, enchup/README.md]
-  - [dir, enchup/templates/repo]
+#tree:
+#  - [file, enchup/enchup.yml, true]
+#  - [file, enchup/README.md]
+#  - [dir, enchup/templates/repo]
 
-repository:
-  setup: frankland/enchup-js-struct
-  init: frankland/valent-boilerplate
+#repository:
+#  setup: frankland/enchup-js-struct
+#  init: frankland/valent-boilerplate
 
 
 

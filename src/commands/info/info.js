@@ -136,11 +136,12 @@ var Command = require('../command'),
               for (var i = 0, size = component.components.length; i < size; i++) {
                 var item = component.components[i].split(':'),
                     name = item[0],
-                    template = item[1] || 'default';
+                    template = item[1] || item[0];
+
 
                 var path = Schema.resolve(name);
 
-                dependencies.push([Chalk.yellow(name), this.highlite(path), template]);
+                dependencies.push([Chalk.yellow(name), this.highlite(path), template + '.hbs']);
               }
             }
           }

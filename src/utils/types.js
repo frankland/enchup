@@ -1,5 +1,6 @@
 "use strict";
 
+// TODO: use lodash
 var objectTypes = {
   'boolean': false,
   'function': true,

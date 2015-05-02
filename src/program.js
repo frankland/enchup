@@ -12,13 +12,13 @@ function setup() {
       .version(config.version);
 
   program
-      .command('setup [repository]')
+      .command('setup <repository>')
       .option('-f, --force', 'Clear directory if it is not empty')
       .description('Setup enchup config and templates')
       .action(commands.setup);
 
   program
-      .command('init [repository]')
+      .command('init <repository>')
       .description('Initialize application. Similar to `git clone [repository]` but remove .git  after cloning')
       .action(commands.init);
 

@@ -15,7 +15,7 @@ var Command = require('../command'),
 
         return this.flow()
             .then(this.prepare.bind(this))
-            .then(this.clone.bind(this, repository || this.config.repository.init))
+            .then(this.clone.bind(this, repository))
             .then(this.clean.bind(this));
       },
 

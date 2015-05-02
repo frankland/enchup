@@ -5,7 +5,7 @@ var Command = require('../command'),
     path = require('path'),
     exec = require('child_process').exec,
     rimraf = require('rimraf'),
-    mkdir = require('mkdirp').sync,
+    //mkdir = require('mkdirp').sync,
     Setup = Command.extend({
 
       initialize: function() {
@@ -17,25 +17,26 @@ var Command = require('../command'),
         return this.flow()
             .then(this.prepare.bind(this))
             .then(this.create.bind(this))
-            .then(this.clone.bind(this, repository || this.config.repository.setup));
+            .then(this.clone.bind(this, repository));
       },
 
 
       clone: function(repository) {
         var gh = 'https://github.com/' + repository,
-            temp = this.config.temp,
+            dir = this.config.dir,
+            //temp = this.config.temp,
 
-            copy = this.copy.bind(this),
-            removeTemp = this.removeTemp.bind(this),
+            //copy = this.copy.bind(this),
+            //removeTemp = this.removeTemp.bind(this),
 
             deffered = this.createDeferred();
 
-        this.removeTemp();
+        //this.removeTemp();
 
-        exec('git clone --quiet ' + gh + ' ' + temp, function(error) {
+        exec('git clone --quiet ' + gh + ' ' + dir, function(error) {
           if (error === null) {
-            copy();
-            removeTemp();
+            //copy();
+            //removeTemp();
 
             deffered.resolve();
           } else {
@@ -46,22 +47,22 @@ var Command = require('../command'),
         return deffered.promise;
       },
 
-      copy: function() {
-        var tree = this.config.tree,
-            dir = this.config.dir,
-            temp = this.config.temp;
-
-        for (var i = 0, size = tree.length; i < size; i++) {
-          var from = path.join(temp, tree[i][1]),
-              to = path.join(dir, tree[i][1]);
-
-          if (tree[i][0] == 'dir') {
-            mkdir(to);
-          }
-
-          fs.renameSync(from, to);
-        }
-      },
+      //copy: function() {
+      //  var tree = this.config.tree,
+      //      dir = this.config.dir,
+      //      temp = this.config.temp;
+      //
+      //  for (var i = 0, size = tree.length; i < size; i++) {
+      //    var from = path.join(temp, tree[i][1]),
+      //        to = path.join(dir, tree[i][1]);
+      //
+      //    if (tree[i][0] == 'dir') {
+      //      mkdir(to);
+      //    }
+      //
+      //    fs.renameSync(from, to);
+      //  }
+      //},
 
       create: function() {
         var dir = this.config.dir;
@@ -71,44 +72,47 @@ var Command = require('../command'),
         }
       },
 
-      removeTemp: function() {
-        var temp = this.config.temp;
-
-        if (fs.existsSync(temp)) {
-          rimraf.sync(temp);
-        }
-      },
+      //removeTemp: function() {
+      //  var temp = this.config.temp;
+      //
+      //  if (fs.existsSync(temp)) {
+      //    rimraf.sync(temp);
+      //  }
+      //},
 
       clean: function() {
-        var tree = this.config.tree,
-            dir = this.config.dir;
+        var dir = this.config.dir;
+        rimraf.sync(dir);
 
-        for (var i = 0, size = tree.length; i < size; i++) {
-          var item = path.join(dir, tree[i][1]),
-              type = tree[i][0];
-
-          if (type == 'file') {
-            if (fs.existsSync(item)) {
-              // move
-              if (tree[i][2] === true) {
-                var date = +(new Date()),
-                    name = item + '.' + date;
-
-                if (fs.existsSync(name)) {
-                  fs.unlinkSync(item);
-                }
-
-                fs.renameSync(item, name);
-              } else {
-                fs.unlinkSync(item);
-              }
-            }
-          } else if (type == 'dir') {
-            if (fs.existsSync(item)) {
-              rimraf.sync(item);
-            }
-          }
-        }
+        //var tree = this.config.tree,
+        //    dir = this.config.dir;
+        //
+        //for (var i = 0, size = tree.length; i < size; i++) {
+        //  var item = path.join(dir, tree[i][1]),
+        //      type = tree[i][0];
+        //
+        //  if (type == 'file') {
+        //    if (fs.existsSync(item)) {
+        //      // move
+        //      if (tree[i][2] === true) {
+        //        var date = +(new Date()),
+        //            name = item + '.' + date;
+        //
+        //        if (fs.existsSync(name)) {
+        //          fs.unlinkSync(item);
+        //        }
+        //
+        //        fs.renameSync(item, name);
+        //      } else {
+        //        fs.unlinkSync(item);
+        //      }
+        //    }
+        //  } else if (type == 'dir') {
+        //    if (fs.existsSync(item)) {
+        //      rimraf.sync(item);
+        //    }
+        //  }
+        //}
       },
 
       prepare: function() {
@@ -118,7 +122,7 @@ var Command = require('../command'),
           if (this.isForce()) {
             this.clean();
           } else {
-            throw new Error('enchup directory already exists. If you want to override - use "-f --force" flag');
+            throw new Error('enchup directory already exists. If you want to clean and setup use "-f --force" flag');
           }
         }
       }

@@ -4,7 +4,7 @@ var Boop = require('boop'),
     join = require('path').join,
     read = require('fs').readFileSync,
     exists = require('fs').existsSync,
-    extname = require('path').extname,
+    //extname = require('path').extname,
     Handlebars = require('../../utils/handlebars');
 
 var Templates = Boop.extend({
@@ -21,22 +21,25 @@ var Templates = Boop.extend({
   },
 
   path: function(Component) {
-    var template = Component.template || 'default',
-        dir = this.config.template_dir;
-
-    //template += extname(Component.path);
+    var template = Component.template || Component.name;
     template += '.hbs';
 
+    var dir = this.config.template_dir;
+    var path = join(dir, template);
 
-    var appTemplate = join(dir, 'app', Component.name, template),
-        repoTemplate = join(dir, 'repo', Component.name, template),
-        path;
+    //var appTemplate = join(dir, 'app', Component.name, template),
+    //    repoTemplate = join(dir, 'repo', Component.name, template),
+    //    path;
 
 
-    if (exists(appTemplate)) {
-      path = appTemplate;
-    } else if (exists(repoTemplate)) {
-      path = repoTemplate;
+    //if (exists(appTemplate)) {
+    //  path = appTemplate;
+    //} else if (exists(repoTemplate)) {
+    //  path = repoTemplate;
+    //}
+
+    if (!exists(path)) {
+      path = null;
     }
 
     return path;

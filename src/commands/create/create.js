@@ -203,10 +203,16 @@ var Command = require('../command'),
             }
 
             if (ok) {
-              Component.save();
+              //Component.save();
               created.push(Component);
             }
           }
+        }
+
+        // save components after loop to prevent errors with -c --continue flags
+        // make create command is atomic
+        for (var i = 0, size = created.length; i < size; i++) {
+          created[i].save();
         }
 
         this.log(created);
