@@ -40,15 +40,9 @@ Available commands:
 
 ## 2. Commands
 ### 2.1 Setup
-Setup enchup config and templates form repository. If repository is not set - default is using.
-Default repository [frankland/enchup-js-app](http://github.com/frankland/enchup-js-app)
+Setup enchup config and templates from repository. Supports only github repositories (format - %username%/%reponame%)
 ```
-enchup setup
-```
-
-Or using custom repository. There are only github repositories. Using format - %username%/%reponame%
-```
-enchup setup frankland/enchup-angular-app
+enchup setup <repository>
 ```
 
 Flags:
@@ -61,15 +55,8 @@ Could be used at already existing application.
 ### 2.2 Init
 Initialize application to current directory. Similar to `git clone [repository]` but remove .git  after cloning.
 Directory should be empty.
-If repository is not set - default is using.
-Default repository [frankland/valent-boilerplate](http://github.com/frankland/valent-boilerplate)
 ```
-enchup init
-```
-
-Or using custom repository. There are only github repositories. Using format - %username%/%reponame%
-```
-enchup init [repository]
+enchup init <repository>
 ```
 
 ### 2.3 Info
@@ -101,25 +88,11 @@ For additional information about component use `enchup info [component]`
         |-user-enchup.yml
         |
         |-templates/
-                   |-repo/
-                   |     |-controller/
-                   |     |           |-default.js
-                   |     |           |-admin.js
-                   |     |-template/
-                   |               |-default.html
-                   |
-                   |-app/
-                        |-controller/
-                        |           |-default.js
-                        |-template/
-                                  |-default.html
 
 
  - enchup/enchup.yml - main config
  - enchup/user-enchup.yml - user enchup config. Should be ignored by cvs
- - enchup/tempaltes/repo - templates that donwloaded from repository.  Will be overriden if you use `enchup setup` on existing application
- - enchup/templates/app - application templates. Will **not** be overriden if you user `enchup setup` on existing application
-
+ - enchup/templates - Handlebars templates for components
 
 ## 4. Enchup config: enchup.yml
 ## 4.1 Config overview
@@ -180,8 +153,7 @@ Run `enchup info [component]` to get detailed info about how to create component
 ```
 enchup create controller user:profile
 ```
-Will create script /**user**/controllers/**profile**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
-will check /enchup/templates/**repo**/controller/default.js.
+Will create script /**user**/controllers/**profile**.js with controller's default template /enchup/templates/controller.hbs
 
 <p align="center">
   <img src="http://habrastorage.org/files/93a/8a1/935/93a8a1935c6843b99d7dc628a8790b95.png" alt="enchup info controller"/>
@@ -191,10 +163,8 @@ will check /enchup/templates/**repo**/controller/default.js.
 enchup create screen user:profile:/profile.html
 ```
 Will create scripts:
- - /**user**/controllers/**profile**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
-will check `/enchup/templates/**repo**/controller/default.js`.
- - /**user**/templates/**profile**.html with default view's default template /enchup/templates/**app**/view/default.html or if not exist
- will check `/enchup/templates/**repo**/view/default.html`.
+ - /**user**/controllers/**profile**.js with controller's default template /enchup/templates/controller.hbs 
+ - /**user**/templates/**profile**.html with default view's default template /enchup/templates/view.hbs
 
 <p align="center">
   <img src="http://habrastorage.org/files/10b/bd5/ae0/10bbd5ae0e6741dfad1a31f35846c438.png" alt="enchup info screen"/>
@@ -204,10 +174,8 @@ will check `/enchup/templates/**repo**/controller/default.js`.
 enchup create landing frankland:/frankland.html
 ```
 Will create scripts:
- - /**frankland**/controllers/**frankland**.js with controller's default template /enchup/templates/**app**/controller/default.js or if not exist
-will check `/enchup/templates/**repo**/controller/default.js`.
- - /**frankland**/view/**frankland**.html with template **landing** /enchup/templates/**app**/view/**landing**.html or if not exist
- will check /enchup/templates/**repo**/view/**landing**.html.
+ - /**frankland**/controllers/**frankland**.js with controller's default template /enchup/templates/controller.hbs
+ - /**frankland**/view/**frankland**.html with template **landing** /enchup/templates/landing.hbs or if not exist
 
 <p align="center">
   <img src="http://habrastorage.org/files/7cc/32b/9b4/7cc32b9b4dc24eacb9494992edba0108.png" alt="enchup info landing"/>
@@ -220,7 +188,8 @@ This is just user's enchup config that should be ignored by vcs. Need for develo
 
 ## 6. Templates
 ### 6.1 Overview
-Enchup is trying to find tempalate at `/enchup/templates/app/<component>/<template>` but if there is no - it check repo directory - `/enchup/templates/repo/<component>/<template>`
+Enchup is trying to find tempalate at `/enchup/templates/<template>.hbs`. If template is not described for component then 
+template's name will be same as component's name.
 
 [Handlebars]([https://github.com/wycats/handlebars.js/) is using for template rendering. There are available few helpers:
 
