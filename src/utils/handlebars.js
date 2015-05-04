@@ -25,7 +25,7 @@ function lowercase(str) {
 }
 
 function tail(str) {
-  return (str || '').split('/').pop()
+  return (str || '').split('/').pop();
 }
 
 function dots(str) {
@@ -33,6 +33,7 @@ function dots(str) {
 }
 
 function normalize(str) {
+  str = tail(str);
   return ucfirst(str || '').replace(/-(.)/g, function(match, point) {
     return point.toUpperCase();
   });
