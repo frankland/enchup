@@ -225,12 +225,17 @@ var Command = require('../command'),
         for (var i = 0, size = components.length; i < size; i++) {
           var Component = components[i];
 
-          var template = this.Template.path(Component) || 'empty';
+
+          var template = this.Template.path(Component.template, Component.name);
+          var exists = this.Template.exists(Component.template, Component.name);
+
 
           table.push([
             Chalk.cyan(Component.name),
             Component.path,
-            template.replace(/([^\/]+)\.hbs/, Chalk.green('$1') + '.hbs')
+            exists
+              ? template.replace(/([^\/]+)\.hbs/, Chalk.green('$1') + '.hbs')
+              : 'template does not exist'
           ]);
         }
 

@@ -8,6 +8,7 @@ var Command = require('../command'),
     Types = require('../../utils/types'),
     Table = require('cli-table'),
     Placeholders = require('../create/placeholders'),
+    Templates = require('../create/templates'),
     SchemaClass = require('../create/schema'),
     RandomWords = require('../../utils/random-words'),
     Info = Command.extend({
@@ -21,6 +22,7 @@ var Command = require('../command'),
       },
 
       exec: function() {
+
 
         return this.flow()
             .then(this.validate.bind(this))
@@ -83,6 +85,8 @@ var Command = require('../command'),
       },
 
       detailed: function() {
+        var templates = new Templates(this.config);
+
         if (this.component) {
           var Schema = new SchemaClass(this.config.app_config.components, this.config.app_config.base);
 
@@ -136,12 +140,17 @@ var Command = require('../command'),
               for (var i = 0, size = component.components.length; i < size; i++) {
                 var item = component.components[i].split(':'),
                     name = item[0],
-                    template = item[1] || item[0];
+                    template = templates.path(item[0], item[1]),
+                    exists = templates.exists(item[0], item[1]);
 
+                var coloredTemplate = template.replace(/([^\/]+)$/g, Chalk.blue('$1'));
+
+                if (!exists) {
+                  coloredTemplate += Chalk.red(' (not exists)');
+                }
 
                 var path = Schema.resolve(name);
-
-                dependencies.push([Chalk.yellow(name), this.highlite(path), template + '.hbs']);
+                dependencies.push([Chalk.yellow(name), this.highlite(path), coloredTemplate]);
               }
             }
           }

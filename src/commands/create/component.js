@@ -3,12 +3,12 @@
 var Boop = require('boop'),
     exists = require('fs').existsSync,
     write = require('fs').writeFileSync,
-    read = require('fs').readFileSync,
+    //read = require('fs').readFileSync,
     mkdir = require('mkdirp').sync,
     dirname = require('path').dirname,
     normalize = require('path').normalize,
     join = require('path').join,
-    fs = require('fs'),
+    //fs = require('fs'),
     //vm = require('vm'),
     rimraf = require('rimraf');
 

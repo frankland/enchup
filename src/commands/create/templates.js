@@ -20,12 +20,16 @@ var Templates = Boop.extend({
     return compile(parameters);
   },
 
-  path: function(Component) {
-    var template = Component.template || Component.name;
-    template += '.hbs';
 
+  exists: function(name, template) {
+    var path = this.path(name, template);
+
+    return exists(path);
+  },
+
+  path: function(name, template) {
+    var resolved = (template || name) + '.hbs';
     var dir = this.config.template_dir;
-    var path = join(dir, template);
 
     //var appTemplate = join(dir, 'app', Component.name, template),
     //    repoTemplate = join(dir, 'repo', Component.name, template),
@@ -38,20 +42,16 @@ var Templates = Boop.extend({
     //  path = repoTemplate;
     //}
 
-    if (!exists(path)) {
-      path = null;
-    }
 
-    return path;
+    return join(dir, resolved);
   },
 
 
   get: function(Component) {
+    var source = '';
 
-    var source = '',
-        path = this.path(Component);
-
-    if (!!path) {
+    if (!!this.exists(Component.name, Component.template)) {
+      var path = this.path(Component.name, Component.template);
       source = read(path, 'utf8');
     }
 

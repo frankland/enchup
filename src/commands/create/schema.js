@@ -50,12 +50,14 @@ var Schema = Boop.extend({
       }
     }
 
+
     for (var key in replacement) {
       if (replacement.hasOwnProperty(key)) {
         var expr = new RegExp(':' + key, 'g');
         resolved = resolved.replace(expr, replacement[key]);
       }
     }
+
 
     return resolved;
   },
